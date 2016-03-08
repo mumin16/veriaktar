@@ -10,6 +10,7 @@
 #include "veriaktar.h"
 #include "eklecikar.h"
 
+#define BUILDVERSION "0"
 
 INT_PTR CALLBACK DialogProc(
 	_In_ HWND   hwndDlg,
@@ -20,6 +21,23 @@ INT_PTR CALLBACK DialogProc(
 	switch (uMsg) {
 	case WM_INITDIALOG:
 	{
+
+		if (S_OK == URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/versiyon.txt", "versiyon.txt", 0, NULL)) {
+			//"Ok";
+			std::string sLine = "";
+			std::ifstream infile;
+
+			infile.open("versiyon.txt");
+			getline(infile, sLine);
+			if(lstrcmp(sLine.c_str(),BUILDVERSION)>0)MessageBox(hwndDlg,"Yeni Güncelleme var!","Bilgi",MB_OK);
+
+		}
+		else {
+			MessageBox(hwndDlg, "Versiyon Kontrolu Yapýlamadý\n Son Sürümü kullandýðýnýza emin olun\n internet baðlantýsýný kontrol edin", 0, MB_OK);
+			
+
+		}
+
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST 30");
 //		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST 50");
 //		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST 100");
@@ -46,7 +64,10 @@ INT_PTR CALLBACK DialogProc(
 	break;
 	}
 	case WM_COMMAND:
-		if (LOWORD(wParam) == IDR_VERIAKTAR)VeriAktar(hwndDlg);
+		if (LOWORD(wParam) == IDR_VERIAKTAR) {
+			CloseHandle(CreateThread(NULL, NULL, ThreadProc, hwndDlg, 0, 0));
+			
+		}
 		else if (LOWORD(wParam) == IDR_HAKKINDA)Hakkinda(hwndDlg);
 		else if (LOWORD(wParam) == IDR_PORTFOYYUKLE)PortfoyYukle(hwndDlg);
 		else if (LOWORD(wParam) == IDR_PORTFOYKAYDET)PortfoyKaydet(hwndDlg);
