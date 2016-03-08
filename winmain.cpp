@@ -6,9 +6,9 @@
 #include <fstream>
 #include <string>
 #include "hakkinda.h"
-#include "portfoyyukle.h"
-#include "portfoykaydet.h"
+#include "portfoyyuklekaydet.h"
 #include "veriaktar.h"
+#include "eklecikar.h"
 
 
 INT_PTR CALLBACK DialogProc(
@@ -50,6 +50,10 @@ INT_PTR CALLBACK DialogProc(
 		else if (LOWORD(wParam) == IDR_HAKKINDA)Hakkinda(hwndDlg);
 		else if (LOWORD(wParam) == IDR_PORTFOYYUKLE)PortfoyYukle(hwndDlg);
 		else if (LOWORD(wParam) == IDR_PORTFOYKAYDET)PortfoyKaydet(hwndDlg);
+		else if (LOWORD(wParam) == IDC_EKLE)Ekle(hwndDlg);
+		else if (LOWORD(wParam) == IDC_HEPSINIEKLE)HepsiniEkle(hwndDlg);
+		else if (LOWORD(wParam) == IDC_CIKAR)Cikar(hwndDlg);
+		else if (LOWORD(wParam) == IDC_HEPSINICIKAR)HepsiniCikar(hwndDlg);
 		break;
 	case WM_CLOSE:
 		EndDialog(hwndDlg, 0);

@@ -150,9 +150,9 @@
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="eklecikar.h" />
     <ClInclude Include="hakkinda.h" />
-    <ClInclude Include="portfoykaydet.h" />
-    <ClInclude Include="portfoyyukle.h" />
+    <ClInclude Include="portfoyyuklekaydet.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="veriaktar.h" />
   </ItemGroup>
