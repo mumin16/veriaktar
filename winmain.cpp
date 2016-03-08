@@ -1,0 +1,71 @@
+#include <Windows.h>
+#include <Urlmon.h>
+#pragma comment(lib,"Urlmon.lib")
+#include "resource.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "hakkinda.h"
+#include "portfoyyukle.h"
+#include "portfoykaydet.h"
+#include "veriaktar.h"
+
+
+INT_PTR CALLBACK DialogProc(
+	_In_ HWND   hwndDlg,
+	_In_ UINT   uMsg,
+	_In_ WPARAM wParam,
+	_In_ LPARAM lParam
+	) {
+	switch (uMsg) {
+	case WM_INITDIALOG:
+	{
+		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST 30");
+//		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST 50");
+//		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST 100");
+		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"HAZIR DEÐÝL");
+		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_SETCURSEL, 0, NULL);
+
+
+
+		PostMessage(GetDlgItem(hwndDlg, IDC_CHECK1), BM_SETCHECK, BST_CHECKED, 0);
+
+		std::string sLine = "";
+		std::ifstream infile;
+		infile.open("BIST30.txt");
+		while (!infile.eof())
+		{
+			getline(infile, sLine);
+			SendDlgItemMessage(hwndDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)sLine.c_str());
+		}
+		infile.close();
+
+	
+		
+	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_ADDSTRING, 0, (LPARAM)"Program Kullanýma Hazýr.");
+	break;
+	}
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDR_VERIAKTAR)VeriAktar(hwndDlg);
+		else if (LOWORD(wParam) == IDR_HAKKINDA)Hakkinda(hwndDlg);
+		else if (LOWORD(wParam) == IDR_PORTFOYYUKLE)PortfoyYukle(hwndDlg);
+		else if (LOWORD(wParam) == IDR_PORTFOYKAYDET)PortfoyKaydet(hwndDlg);
+		break;
+	case WM_CLOSE:
+		EndDialog(hwndDlg, 0);
+		break;
+	}
+
+	return false;
+}
+
+int CALLBACK WinMain(
+	_In_ HINSTANCE hInstance,
+	_In_ HINSTANCE hPrevInstance,
+	_In_ LPSTR     lpCmdLine,
+	_In_ int       nCmdShow
+	) {
+
+	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
+
+}
