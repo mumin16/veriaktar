@@ -17,7 +17,9 @@
 #define IDC_LIST3                       1009
 #define IDC_SYMBOL2                     1009
 #define IDC_CHECK1                      1010
+#define IDC_GUNLUK                      1010
 #define IDC_CHECK2                      1011
+#define IDC_1DAKIKA                     1011
 #define ID_Menu                         40001
 #define ID_PORTF40002                   40002
 #define IDR_HAKKINDA                    40003

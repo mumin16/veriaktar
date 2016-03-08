@@ -1,14 +1,19 @@
 #pragma once
-void VeriAktar(_In_ HWND   hwndDlg) {
+
+void VeriYaz(_In_ HWND   hwndDlg) {
+}
+void VeriIndir(_In_ HWND   hwndDlg) {
 
 	if (0 == SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETCOUNT, 0, 0)){
 		MessageBox(hwndDlg, "Yüklenecekler Belirtilmemiþ!", 0, MB_OK);
 		return;
 	}
 
+	if (0 == SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0) && 0 == SendDlgItemMessage(hwndDlg, IDC_1DAKIKA, BM_GETCHECK, 0, 0)) {
+		MessageBox(hwndDlg, "Periyot seçilmemiþ!", 0, MB_OK);
+		return;
+	}
 
-	CreateDirectory("GUNLUK", NULL);
-	CreateDirectory("1DAK", NULL);
 
 	char buffer[250];
 	std::string sLine = "";
@@ -73,6 +78,6 @@ void VeriAktar(_In_ HWND   hwndDlg) {
 DWORD WINAPI ThreadProc(
 	_In_ LPVOID lpParameter
 	) {
-	VeriAktar((HWND)lpParameter);
+	VeriIndir((HWND)lpParameter);
 	return 0;
 }

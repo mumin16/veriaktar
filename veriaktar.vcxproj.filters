@@ -21,13 +21,13 @@
     <ClInclude Include="hakkinda.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="veriaktar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="eklecikar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="portfoyyuklekaydet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="veriaktar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
