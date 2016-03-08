@@ -50,7 +50,7 @@ void VeriAktar(_In_ HWND   hwndDlg) {
 			incsv.close();
 			DeleteFile(buffer2);
 			std::string a = buffer2;
-			a.append(" yüklendi, aktarýlýyor..");
+			a.append(" yüklendi, aktarýldý..");
 			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
 		}
 		else {

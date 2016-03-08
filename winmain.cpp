@@ -75,6 +75,7 @@ INT_PTR CALLBACK DialogProc(
 		else if (LOWORD(wParam) == IDC_HEPSINIEKLE)HepsiniEkle(hwndDlg);
 		else if (LOWORD(wParam) == IDC_CIKAR)Cikar(hwndDlg);
 		else if (LOWORD(wParam) == IDC_HEPSINICIKAR)HepsiniCikar(hwndDlg);
+		
 		break;
 	case WM_CLOSE:
 		EndDialog(hwndDlg, 0);
