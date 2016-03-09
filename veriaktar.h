@@ -1,14 +1,22 @@
 #pragma once
+#include <bitset>
+struct MASTERHEADER {
+	char totalfx[1]={0};
+	char unknown[1] = { 0 };
+	char _totalfx[1] = { 0 };
+	char _unknown[50] = { 0 };
+}tagMASTERHEADER;
 struct MASTER {
-	char fx[1];
-	char unknown1[6];
-	char name[16];
-	char unknown2[2];
-	char fdate[4];//YYMMDD float cvs
-	char ldate[4];//YYMMDD float cvs
-	char unknown3[3];
-	char symbol[14];
-	char unknown4[3];
+	char fx[1] = { 0 };
+	char unknown[6] = { 0 };
+	char secname[16] = { 0x20 };
+	char _unknown[2] = { 0 };
+	char fdate[4] = { 0 };//YYMMDD float cvs  YY=yyyy- 1900 
+	char ldate[4] = { 0 };//YYMMDD float cvs 
+	char period[1] = { 'D' };//'I', 'D'
+	char timeframe[2] = { 0 };//0 and 60 minutes
+	char secsymbol[14] = { 0x20 };
+	char __unknown[3] = { 0 };
 }tagMASTER;
 
 void VeriYaz(_In_ HWND   hwndDlg,_In_ const char* dir) {
@@ -77,18 +85,35 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 						FILE_ATTRIBUTE_NORMAL,  // normal file
 						NULL);                  // no attr. template
 					DWORD dwBytesWritten = 0;
-					MASTER master= { 0 };
-					master.fx[0] = 0;
-					memcpy(master.symbol, buffer2,14);
-					memcpy(master.name, buffer2, 16);
+					MASTERHEADER masterheader;
+					masterheader.totalfx[0] = 1;
+					masterheader._totalfx[0] = 1;
+			
+					WriteFile(
+						hFile,           // open file handle
+						&masterheader,      // start of data to write
+						sizeof(masterheader),  // number of bytes to write
+						&dwBytesWritten, // number of bytes that were written
+						NULL);
 
-					char Master[] = "This is some test data to write to the file.";
+			
+					MASTER master;
+					master.fx[0] = 1;
+					memcpy(master.secname, buffer2, lstrlen(buffer2));
+					memcpy(master.secsymbol, buffer2, lstrlen(buffer2));
+					
+					unsigned char ret[255];
+					float f = 1160309;//
+					IEEEToBasic(&f, ret);
+					
+
 					WriteFile(
 						hFile,           // open file handle
 						&master,      // start of data to write
 						sizeof(master),  // number of bytes to write
 						&dwBytesWritten, // number of bytes that were written
 						NULL);
+
 				}
 				else {
 				

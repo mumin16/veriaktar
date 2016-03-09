@@ -5,10 +5,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "msbinieee.h"
 #include "hakkinda.h"
 #include "portfoyyuklekaydet.h"
 #include "veriaktar.h"
 #include "eklecikar.h"
+
+
+
 
 #define BUILDVERSION "0"
 
@@ -42,6 +46,7 @@ INT_PTR CALLBACK DialogProc(
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST50");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST100");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BISTENDEKSLER");
+		//SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"PARITELER");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_SETCURSEL, 0, NULL);
 
 
@@ -86,12 +91,15 @@ INT_PTR CALLBACK DialogProc(
 	return false;
 }
 
+
+
 int CALLBACK WinMain(
 	_In_ HINSTANCE hInstance,
 	_In_ HINSTANCE hPrevInstance,
 	_In_ LPSTR     lpCmdLine,
 	_In_ int       nCmdShow
 	) {
+
 
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
 

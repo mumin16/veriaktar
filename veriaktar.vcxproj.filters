@@ -30,6 +30,9 @@
     <ClInclude Include="veriaktar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="msbinieee.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
