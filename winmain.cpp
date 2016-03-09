@@ -38,10 +38,10 @@ INT_PTR CALLBACK DialogProc(
 
 		}
 
-		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST 30");
-//		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST 50");
-//		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST 100");
-		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"HAZIR DEÐÝL");
+		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST30");
+		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST50");
+		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST100");
+		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BISTENDEKSLER");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_SETCURSEL, 0, NULL);
 
 
@@ -75,6 +75,7 @@ INT_PTR CALLBACK DialogProc(
 		else if (LOWORD(wParam) == IDC_HEPSINIEKLE)HepsiniEkle(hwndDlg);
 		else if (LOWORD(wParam) == IDC_CIKAR)Cikar(hwndDlg);
 		else if (LOWORD(wParam) == IDC_HEPSINICIKAR)HepsiniCikar(hwndDlg);
+		else if (LOWORD(wParam) == IDC_COMBO1 && HIWORD(wParam) == CBN_SELCHANGE)ComboDegisti(hwndDlg);
 		
 		break;
 	case WM_CLOSE:

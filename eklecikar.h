@@ -1,4 +1,22 @@
 #pragma once
+void ComboDegisti(_In_ HWND   hwndDlg) {
+	SendDlgItemMessage(hwndDlg, IDC_SYMBOL1, LB_RESETCONTENT, 0, 0);
+	char c[256];
+	GetDlgItemText(hwndDlg, IDC_COMBO1, c, 256);
+	std::string str = c;
+	str.append(".txt");
+	std::string sLine = "";
+	std::ifstream infile;
+	infile.open(str.c_str());
+	while (!infile.eof())
+	{
+		getline(infile, sLine);
+		SendDlgItemMessage(hwndDlg, IDC_SYMBOL1, LB_ADDSTRING, 0, (LPARAM)sLine.c_str());
+	}
+	infile.close();
+
+
+}
 void Ekle(_In_ HWND   hwndDlg) {
 	char buffer[255];
 	int cursel = SendDlgItemMessage(hwndDlg, IDC_SYMBOL1, LB_GETCURSEL, 0, 0);
