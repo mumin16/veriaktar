@@ -1,29 +1,131 @@
 #pragma once
-#include <bitset>
+#include <vector>
+
+struct FXHEADER {
+	char unkown[2] = { 0 };
+	char totalrecord[2] = { 0 };//ters+1
+	char _unkown[24] = { 0 };
+}tagFXHEADER;
+
+struct FX {
+	char date[4] = { 0 };//YYMMDD ieee  YY=yyyy- 1900 
+	char time[4] = { 0 };//2359000 ieee
+	char open[4] = { 0 };//ieee
+	char high[4] = { 0 };//ieee
+	char low[4] = { 0 };//ieee
+	char close[4] = { 0 };//ieee
+	char volume[4] = { 0 };//ieee
+	
+}tagFX;
+
 struct MASTERHEADER {
 	char totalfx[1]={0};
 	char unknown[1] = { 0 };
 	char _totalfx[1] = { 0 };
 	char _unknown[50] = { 0 };
 }tagMASTERHEADER;
+
 struct MASTER {
 	char fx[1] = { 0 };
 	char unknown[6] = { 0 };
-	char secname[16] = { 0x20 };
+	char secname[16] = { 0 };
 	char _unknown[2] = { 0 };
-	char fdate[4] = { 0 };//YYMMDD float cvs  YY=yyyy- 1900 
-	char ldate[4] = { 0 };//YYMMDD float cvs 
-	char period[1] = { 'D' };//'I', 'D'
-	char timeframe[2] = { 0 };//0 and 60 minutes
-	char secsymbol[14] = { 0x20 };
+	char fdate[4] = { 0 };//YYMMDD ieee  YY=yyyy- 1900 
+	char ldate[4] = { 0 };//YYMMDD ieee 
+	char period[1] = { 'I' };//'I', 'D'
+	char timeframe[2] = { 1 };//0 and 60 minutes
+	char secsymbol[14] = { 0 };
 	char __unknown[3] = { 0 };
 }tagMASTER;
 
-void VeriYaz(_In_ HWND   hwndDlg,_In_ const char* dir) {
+
+
+void VeriYaz(_In_ HWND   hwndDlg) {
+
+
+
+	HANDLE hFile = CreateFile("MASTER",               // file to open
+		GENERIC_READ,          // open for reading
+		FILE_SHARE_READ,       // share for reading
+		NULL,                  // default security
+		OPEN_EXISTING,         // existing file only
+		FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, // normal file
+		NULL);                 // no attr. template
+
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+
+		hFile = CreateFile("F1.dat",                // name of the write
+			GENERIC_WRITE,          // open for writing
+			0,                      // do not share
+			NULL,                   // default security
+			CREATE_NEW,             // create new file only
+			FILE_ATTRIBUTE_NORMAL,  // normal file
+			NULL);                  // no attr. template
+
+		DWORD dwBytesWritten = 0;
+
+
+		FXHEADER fxheader;
+		fxheader.totalrecord[1] = 1;
+
+
+		WriteFile(
+			hFile,           // open file handle
+			&fxheader,      // start of data to write
+			sizeof(fxheader),  // number of bytes to write
+			&dwBytesWritten, // number of bytes that were written
+			NULL);
+
+		hFile = CreateFile("MASTER",                // name of the write
+			GENERIC_WRITE,          // open for writing
+			0,                      // do not share
+			NULL,                   // default security
+			CREATE_NEW,             // create new file only
+			FILE_ATTRIBUTE_NORMAL,  // normal file
+			NULL);                  // no attr. template
+
+		MASTERHEADER masterheader;
+		masterheader.totalfx[0] = 1;
+		masterheader._totalfx[0] = 1;
+
+		WriteFile(
+			hFile,           // open file handle
+			&masterheader,      // start of data to write
+			sizeof(masterheader),  // number of bytes to write
+			&dwBytesWritten, // number of bytes that were written
+			NULL);
+
+
+		MASTER master;
+		master.fx[0] = 1;
+//		memcpy(master.secname, buffer2, lstrlen(buffer2));
+//		memcpy(master.secsymbol, buffer2, lstrlen(buffer2));
+
+		unsigned char ret[255];
+		float f = 1160309;//
+		IEEEToBasic(&f, ret);
+
+
+		WriteFile(
+			hFile,           // open file handle
+			&master,      // start of data to write
+			sizeof(master),  // number of bytes to write
+			&dwBytesWritten, // number of bytes that were written
+			NULL);
+	}
+
+	else {
+
+	}
+
+
+	SetCurrentDirectory(curdir);
+}
+
+void VeriOku(_In_ HWND   hwndDlg, _In_ const char* dir) {
 }
 void VeriIndir(_In_ HWND   hwndDlg) {
-	char curdir[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, curdir);
 
 
 	if (0 == SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETCOUNT, 0, 0)){
@@ -36,6 +138,14 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 		return;
 	}
 
+
+	if (0 != SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0))
+	{
+
+		std::string dir = curdir;
+		dir.append("\\GUNLUK");
+		SetCurrentDirectory(dir.c_str());
+	}
 
 	char buffer[250];
 	std::string sLine = "";
@@ -53,73 +163,15 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 			//"Ok";
 			incsv.open(buffer2);
 			getline(incsv, sLine);//ilk satýrý al
+					
 			while (!incsv.eof())
 			{
+				
 				getline(incsv, sLine);
 				char sday[12], smonth[12], syear[12], sopen[12], shigh[12], slow[12], sclose[12], svol[12];
 				sscanf(sLine.c_str(), "%[^-]-%[^-]-%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", sday, smonth, syear, sopen, shigh, slow, sclose, svol);
 
-				if (0 != SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0))
-				{
-				
-					std::string dir = curdir;
-					dir.append("\\GUNLUK");
-					SetCurrentDirectory(dir.c_str());
-				}
-
-				HANDLE hFile = CreateFile("MASTER",               // file to open
-					GENERIC_READ,          // open for reading
-					FILE_SHARE_READ,       // share for reading
-					NULL,                  // default security
-					OPEN_EXISTING,         // existing file only
-					FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, // normal file
-					NULL);                 // no attr. template
-
-				if (hFile == INVALID_HANDLE_VALUE)
-				{
-					hFile = CreateFile("MASTER",                // name of the write
-						GENERIC_WRITE,          // open for writing
-						0,                      // do not share
-						NULL,                   // default security
-						CREATE_NEW,             // create new file only
-						FILE_ATTRIBUTE_NORMAL,  // normal file
-						NULL);                  // no attr. template
-					DWORD dwBytesWritten = 0;
-					MASTERHEADER masterheader;
-					masterheader.totalfx[0] = 1;
-					masterheader._totalfx[0] = 1;
-			
-					WriteFile(
-						hFile,           // open file handle
-						&masterheader,      // start of data to write
-						sizeof(masterheader),  // number of bytes to write
-						&dwBytesWritten, // number of bytes that were written
-						NULL);
-
-			
-					MASTER master;
-					master.fx[0] = 1;
-					memcpy(master.secname, buffer2, lstrlen(buffer2));
-					memcpy(master.secsymbol, buffer2, lstrlen(buffer2));
-					
-					unsigned char ret[255];
-					float f = 1160309;//
-					IEEEToBasic(&f, ret);
-					
-
-					WriteFile(
-						hFile,           // open file handle
-						&master,      // start of data to write
-						sizeof(master),  // number of bytes to write
-						&dwBytesWritten, // number of bytes that were written
-						NULL);
-
-				}
-				else {
-				
-				}
-				//if (0 != SendDlgItemMessage(hwndDlg, IDC_1DAKIKA, BM_GETCHECK, 0, 0))
-					//VeriYaz(hwndDlg, "1DAK");
+				VeriYaz(hwndDlg);
 				
 				//const char * months[] = { "Jan", "Feb","Mar", "Apr","May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 				//for (size_t i = 0; i < 11; i++)

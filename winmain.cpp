@@ -1,10 +1,11 @@
-#include <Windows.h>
+ï»¿#include <Windows.h>
 #include <Urlmon.h>
 #pragma comment(lib,"Urlmon.lib")
 #include "resource.h"
 #include <iostream>
 #include <fstream>
 #include <string>
+char curdir[MAX_PATH];
 #include "msbinieee.h"
 #include "hakkinda.h"
 #include "portfoyyuklekaydet.h"
@@ -33,11 +34,11 @@ INT_PTR CALLBACK DialogProc(
 
 			infile.open("versiyon.txt");
 			getline(infile, sLine);
-			if(lstrcmp(sLine.c_str(),BUILDVERSION)>0)MessageBox(hwndDlg,"Yeni Güncelleme var!","Bilgi",MB_OK);
+			if(lstrcmp(sLine.c_str(),BUILDVERSION)>0)MessageBox(hwndDlg,"Yeni GÃ¼ncelleme var!","Bilgi",MB_OK);
 
 		}
 		else {
-			MessageBox(hwndDlg, "Versiyon Kontrolu Yapýlamadý\n Son Sürümü kullandýðýnýza emin olun\n internet baðlantýsýný kontrol edin", 0, MB_OK);
+			MessageBox(hwndDlg, "Versiyon Kontrolu YapÄ±lamadÄ±\n Son SÃ¼rÃ¼mÃ¼ kullandÄ±ÄŸÄ±nÄ±za emin olun\n internet baÄŸlantÄ±sÄ±nÄ± kontrol edin", 0, MB_OK);
 			
 
 		}
@@ -65,7 +66,7 @@ INT_PTR CALLBACK DialogProc(
 
 	
 		
-	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_ADDSTRING, 0, (LPARAM)"Program Kullanýma Hazýr.");
+	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_ADDSTRING, 0, (LPARAM)"Program KullanÄ±ma HazÄ±r.");
 	break;
 	}
 	case WM_COMMAND:
@@ -101,6 +102,10 @@ int CALLBACK WinMain(
 	) {
 
 
+
+
+
+	GetCurrentDirectory(MAX_PATH, curdir);
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
 
 }
