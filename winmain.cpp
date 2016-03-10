@@ -103,7 +103,9 @@ int CALLBACK WinMain(
 
 
 
-
+	//unsigned char ret[255];
+	//float f = 1160309;//
+	//IEEEToBasic(&f, ret);
 
 	GetCurrentDirectory(MAX_PATH, curdir);
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
