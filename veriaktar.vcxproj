@@ -156,6 +156,7 @@
     <ClInclude Include="portfoyyuklekaydet.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="veriaktar.h" />
+    <ClInclude Include="veriindir.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

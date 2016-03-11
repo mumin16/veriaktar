@@ -27,10 +27,13 @@
     <ClInclude Include="portfoyyuklekaydet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="veriaktar.h">
+    <ClInclude Include="msbinieee.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="msbinieee.h">
+    <ClInclude Include="veriindir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="veriaktar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

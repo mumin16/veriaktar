@@ -5,11 +5,68 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
+
+struct FXHEADER {
+	char unkown[2] = { 0 };
+	char totalrecord[2] = { 0 };//ters+1 ieee
+	char _unkown[24] = { 0 };
+}tagFXHEADER;
+
+struct FX {
+	char date[4] = { 0 };//YYMMDD ieee  YY=yyyy- 1900 
+	char time[4] = { 0 };//2359000 ieee
+	char open[4] = { 0 };//ieee
+	char high[4] = { 0 };//ieee
+	char low[4] = { 0 };//ieee
+	char close[4] = { 0 };//ieee
+	char volume[4] = { 0 };//ieee
+
+}tagFX;
+
+struct MASTERHEADER {
+	char totalfx[1] = { 0 };
+	char unknown[1] = { 0 };
+	char _totalfx[1] = { 0 };
+	char _unknown[50] = { 0 };
+}tagMASTERHEADER;
+
+struct MASTER {
+	char fx[1] = { 0 };
+	char unknown[2] = { 0 };
+	char bune[1] = { 0x1c };//7kolonsayisi*4
+	char kolonsayisi[1] = { 7 };//date-time-o-h-l-c-v
+	char ___unknown[2] = { 0 };
+	char secname[16] = { 0 };
+	char _unknown[2] = { 0 };
+	char fdate[4] = { 0 };//YYMMDD ieee  YY=yyyy- 1900 
+	char ldate[4] = { 0 };//YYMMDD ieee 
+	char period[1] = { 'I' };//'I', 'D'
+	char timeframe[2] = { 1 };//0 and 60 minutes
+	char secsymbol[14] = { 0 };
+	char __unknown[3] = { 0 };
+}tagMASTER;
+
+
+MASTERHEADER masterheader;
+MASTER master;
+FXHEADER fxheader;
+FX fx;
+
+
+
+
+std::vector<FX> fxs;
+std::vector<FXHEADER> fxhs;
+
+
+
 char curdir[MAX_PATH];
 #include "msbinieee.h"
 #include "hakkinda.h"
 #include "portfoyyuklekaydet.h"
 #include "veriaktar.h"
+#include "veriindir.h"
 #include "eklecikar.h"
 
 
