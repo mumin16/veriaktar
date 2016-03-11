@@ -72,7 +72,7 @@ char curdir[MAX_PATH];
 
 
 
-#define BUILDVERSION "0"
+#define BUILDVERSION "1"
 
 INT_PTR CALLBACK DialogProc(
 	_In_ HWND   hwndDlg,
