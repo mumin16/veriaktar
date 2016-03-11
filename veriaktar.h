@@ -47,8 +47,12 @@ MASTER master;
 FXHEADER fxheader;
 FX fx;
 
-int totalrecord=0;
-bool lastrecord=FALSE;
+
+
+
+std::vector<FX> fxs;
+std::vector<FXHEADER> fxhs;
+
 
 void VeriYaz(_In_ HWND   hwndDlg, _In_  LPTSTR symbol) {
 	HANDLE hMFile, hFXFile;
@@ -92,8 +96,8 @@ void VeriYaz(_In_ HWND   hwndDlg, _In_  LPTSTR symbol) {
 
 		WriteFile(
 			hFXFile,           // open file handle
-			&fx,      // start of data to write
-			sizeof(fx),  // number of bytes to write
+			fxs.data(),      // start of data to write
+			fxs.size()*28,  // number of bytes to write
 			&dwBytesWritten, // number of bytes that were written
 			NULL);
 
@@ -117,8 +121,8 @@ void VeriYaz(_In_ HWND   hwndDlg, _In_  LPTSTR symbol) {
 		master.fx[0] = 1;
 		lstrcpy(master.secname, symbol);
 		lstrcpy(master.secsymbol, symbol);
-		lstrcpyn(master.fdate, fx.date,5);
-		lstrcpyn(master.ldate, fx.date, 5);
+		lstrcpyn(master.fdate, fxs.front().date,5);
+		lstrcpyn(master.ldate, fxs.back().date, 5);
 		master.period[0] = 'I';
 	
 
@@ -132,6 +136,14 @@ void VeriYaz(_In_ HWND   hwndDlg, _In_  LPTSTR symbol) {
 
 	
 	}
+
+
+
+
+
+
+
+
 
 
 	//if (!hMFile)CloseHandle(hMFile);
@@ -173,8 +185,8 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 			//"Ok";
 			incsv.open(buffer2);
 			getline(incsv, sLine);//ilk satýrý al
-			totalrecord = 0;
-			lastrecord = FALSE;
+
+
 			while (!incsv.eof())
 			{
 				
@@ -235,38 +247,28 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 				memmove(fx.date, (LPCSTR)ret, 4);
 			
 
+				fxs.push_back(fx);
+	
+				
+			}
 
-				++totalrecord;
-				f = float(totalrecord + 1);
-
-				if(totalrecord<255)
+			
+				if(fxs.size()<255)
 				{ 
-					fxheader.totalrecord[0] = totalrecord+1;
+					fxheader.totalrecord[0] = fxs.size()  + 1;
 				}
 				else
 				{
+					unsigned char ret[255];
+					float f = fxs.size() + 1;
 					IEEEToBasic(&f, ret);
 					std::reverse(ret, ret + 4);
 					fxheader.totalrecord[0] = ret[1];
 					fxheader.totalrecord[1] = ret[0];
 				}
-				
 
-
-
-				VeriYaz(hwndDlg, buffer2);
-				
-				//const char * months[] = { "Jan", "Feb","Mar", "Apr","May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-				//for (size_t i = 0; i < 11; i++)
-				//{
-				
-
-				//}
-
-				
-			}
-
-			lastrecord = TRUE;
+			std::reverse(fxs.begin(), fxs.end());    // 9 8 7 6 5 4 3 2 1
+			VeriYaz(hwndDlg, buffer2);
 			incsv.close();
 			DeleteFile(buffer2);
 			std::string a = buffer2;
