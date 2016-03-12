@@ -115,6 +115,9 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 			std::reverse(fxs.begin(), fxs.end());    // 9 8 7 6 5 4 3 2 1
 			VeriYaz(hwndDlg, buffer2);
+			fxs.clear();
+			ZeroMemory(&master,sizeof(MASTER));
+			ZeroMemory(&masterheader, sizeof(MASTER));
 			incsv.close();
 			DeleteFile(buffer2);
 			std::string a = buffer2;

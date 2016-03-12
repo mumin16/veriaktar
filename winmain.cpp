@@ -84,6 +84,7 @@ INT_PTR CALLBACK DialogProc(
 	case WM_INITDIALOG:
 	{
 
+
 		if (S_OK == URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/versiyon.txt", "versiyon.txt", 0, NULL)) {
 			//"Ok";
 			std::string sLine = "";
@@ -99,11 +100,15 @@ INT_PTR CALLBACK DialogProc(
 			
 
 		}
+		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST30.txt", "BIST30.txt", 0, NULL);
+		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST50.txt", "BIST50.txt", 0, NULL);
+		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST100.txt", "BIST100.txt", 0, NULL);
+		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTTUM.txt", "BISTTUM.txt", 0, NULL);
 
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST30");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST50");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST100");
-		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BISTENDEKSLER");
+		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BISTTUM");
 		//SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"PARITELER");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_SETCURSEL, 0, NULL);
 
@@ -167,4 +172,26 @@ int CALLBACK WinMain(
 	GetCurrentDirectory(MAX_PATH, curdir);
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
 
+}
+
+
+//MessageBox(hwndDlg, GetLastErrorAsString().c_str(), 0, 0);
+//Returns the last Win32 error, in string format. Returns an empty string if there is no error.
+std::string GetLastErrorAsString()
+{
+	//Get the error message, if any.
+	DWORD errorMessageID = ::GetLastError();
+	if (errorMessageID == 0)
+		return std::string(); //No error message has been recorded
+
+	LPSTR messageBuffer = nullptr;
+	size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+
+	std::string message(messageBuffer, size);
+
+	//Free the buffer.
+	LocalFree(messageBuffer);
+
+	return message;
 }
