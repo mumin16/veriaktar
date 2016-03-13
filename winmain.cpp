@@ -25,14 +25,14 @@ struct FX {
 }tagFX;
 
 struct MASTERHEADER {
-	char totalfx[1] = { 0 };
+	unsigned char totalfx[1] = { 0 };
 	char unknown[1] = { 0 };
-	char _totalfx[1] = { 0 };
+	unsigned char _totalfx[1] = { 0 };
 	char _unknown[50] = { 0 };
 }tagMASTERHEADER;
 
 struct MASTER {
-	char fx[1] = { 0 };
+	unsigned char fx[1] = { 0 };
 	char unknown[2] = { 0 };
 	char bune[1] = { 0x1c };//7kolonsayisi*4
 	char kolonsayisi[1] = { 7 };//date-time-o-h-l-c-v
@@ -168,7 +168,7 @@ int CALLBACK WinMain(
 	//unsigned char ret[255];
 	//float f = 1160309;//
 	//IEEEToBasic(&f, ret);
-
+	CreateDirectory("GUNLUK", 0);
 	GetCurrentDirectory(MAX_PATH, curdir);
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
 
