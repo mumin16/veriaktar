@@ -131,8 +131,8 @@ INT_PTR CALLBACK DialogProc(
 		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST50.txt", "BIST50.txt", 0, NULL);
 		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST100.txt", "BIST100.txt", 0, NULL);
 		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTTUM.txt", "BISTTUM.txt", 0, NULL);
-//		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTTUM.txt", "BISTENDEKSLER.txt", 0, NULL);
-		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTTUM.txt", "BOLUNMELER.txt", 0, NULL);
+//		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTENDEKSLER.txt", "BISTENDEKSLER.txt", 0, NULL);
+		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BOLUNMELER.txt", "BOLUNMELER.txt", 0, NULL);
 
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST30");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST50");
