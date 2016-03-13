@@ -3,12 +3,12 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 
 	if (0 == SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETCOUNT, 0, 0)){
-		MessageBox(hwndDlg, "Yüklenecekler Belirtilmemiþ!", 0, MB_OK);
+		MessageBox(hwndDlg, "Yuklenecekler Belirtilmemis!", 0, MB_OK);
 		return;
 	}
 
 	if (0 == SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0) && 0 == SendDlgItemMessage(hwndDlg, IDC_1DAKIKA, BM_GETCHECK, 0, 0)) {
-		MessageBox(hwndDlg, "Periyot seçilmemiþ!", 0, MB_OK);
+		MessageBox(hwndDlg, "Periyot secilmemis!", 0, MB_OK);
 		return;
 	}
 
@@ -110,11 +110,11 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 			incsv.close();
 			DeleteFile(buffer2);
 			std::string a = buffer2;
-			a.append(" yüklendi, aktarýldý..");
+			a.append(" yuklendi, aktarildi..");
 			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
 		}
 		else {
-			MessageBox(hwndDlg, "Yükleme sýrasýnda hata", buffer2, MB_OK);
+			MessageBox(hwndDlg, "Yukleme sirasinda hata", buffer2, MB_OK);
 			continue;
 
 		}

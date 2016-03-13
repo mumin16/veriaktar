@@ -40,7 +40,7 @@ void PortfoyKaydet(_In_ HWND   hwndDlg) {
 	int length = SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETCOUNT, 0, 0);
 
 	if(0== length){
-	MessageBox(hwndDlg, "Portfoy Kaydedilecek Hiç sembol yok", 0, MB_OK);
+	MessageBox(hwndDlg, "Portfoye Kaydedilecek hic sembol yok", 0, MB_OK);
 	return;
 	}
 

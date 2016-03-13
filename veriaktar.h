@@ -35,7 +35,7 @@ void xmaster_ekleguncelle(_In_  LPTSTR symbol, bool ekle) {
 	itoa(i, a, 10);
 	std::string dat = "F";
 	dat.append(a);
-	dat.append(".DAT");
+	dat.append(".MWD");
 
 
 	hFXFile = CreateFile(dat.c_str(),                // name of the write

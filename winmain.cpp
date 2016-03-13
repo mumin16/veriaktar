@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+//#pragma comment(linker, "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\"")
 
 struct FXHEADER {
 	char unkown[2] = { 0 };
@@ -47,7 +48,31 @@ struct MASTER {
 	char __unknown[3] = { 0 };
 }tagMASTER;
 
+struct XMASTERHEADER {
+	unsigned char unknown[18] = { 0 };
+	unsigned char totalfx_datmwd[2] = { 0 };//tersi
+	unsigned char _unknown[130] = { 0 };
+}tagXMASTERHEADER;
 
+struct XMASTER {
+	unsigned char reserved1[1] = { 1 };
+	char secsymbol[15] = { 0 };
+	char secname[46] = { 0 };
+	char period[1] = { 'I' };//'I', 'D'
+	char timeframe[2] = { 1 };//0 and 60 minutes
+	unsigned char fx[2] = { 0 };//TERSİ
+	unsigned char _unknown[3] = { 0 };
+	unsigned char __unknown[1] = { 0xBF };//3d daily
+	unsigned char ___unknown[33] = { 0 };
+	char fdate[4] = { 0 };//TERSİ 20160229
+	char _fdate[4] = { 0 };//TERSİ 20160229
+	unsigned char ____unknown[4] = { 0 };
+	char ldate[4] = { 0 };//TERSİ 20160229
+	unsigned char _____unknown[30] = { 0 };
+}tagXMASTER;
+
+XMASTERHEADER xmasterheader;
+XMASTER xmaster;
 MASTERHEADER masterheader;
 MASTER master;
 FXHEADER fxheader;
@@ -73,6 +98,8 @@ char curdir[MAX_PATH];
 
 
 #define BUILDVERSION "1"
+
+
 
 INT_PTR CALLBACK DialogProc(
 	_In_ HWND   hwndDlg,
@@ -104,11 +131,15 @@ INT_PTR CALLBACK DialogProc(
 		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST50.txt", "BIST50.txt", 0, NULL);
 		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST100.txt", "BIST100.txt", 0, NULL);
 		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTTUM.txt", "BISTTUM.txt", 0, NULL);
+//		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTTUM.txt", "BISTENDEKSLER.txt", 0, NULL);
+		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTTUM.txt", "BOLUNMELER.txt", 0, NULL);
 
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST30");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST50");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST100");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BISTTUM");
+//		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BISTENDEKSLER");
+//		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"DUNYAENDEKSLER");
 		//SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"PARITELER");
 		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_SETCURSEL, 0, NULL);
 
@@ -128,7 +159,7 @@ INT_PTR CALLBACK DialogProc(
 
 	
 		
-	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_ADDSTRING, 0, (LPARAM)"Program Kullanıma Hazır.");
+	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_ADDSTRING, 0, (LPARAM)"Programin son surumunun kullanildigina emin olun!");
 	break;
 	}
 	case WM_COMMAND:
@@ -168,30 +199,34 @@ int CALLBACK WinMain(
 	//unsigned char ret[255];
 	//float f = 1160309;//
 	//IEEEToBasic(&f, ret);
-	CreateDirectory("GUNLUK", 0);
+	CreateDirectory("GUNLUK", 0);	
 	GetCurrentDirectory(MAX_PATH, curdir);
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
 
 }
 
 
+
+/*
+
 //MessageBox(hwndDlg, GetLastErrorAsString().c_str(), 0, 0);
 //Returns the last Win32 error, in string format. Returns an empty string if there is no error.
 std::string GetLastErrorAsString()
 {
-	//Get the error message, if any.
-	DWORD errorMessageID = ::GetLastError();
-	if (errorMessageID == 0)
-		return std::string(); //No error message has been recorded
+//Get the error message, if any.
+DWORD errorMessageID = ::GetLastError();
+if (errorMessageID == 0)
+return std::string(); //No error message has been recorded
 
-	LPSTR messageBuffer = nullptr;
-	size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+LPSTR messageBuffer = nullptr;
+size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
 
-	std::string message(messageBuffer, size);
+std::string message(messageBuffer, size);
 
-	//Free the buffer.
-	LocalFree(messageBuffer);
+//Free the buffer.
+LocalFree(messageBuffer);
 
-	return message;
+return message;
 }
+*/
