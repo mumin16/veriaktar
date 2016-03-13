@@ -1,0 +1,1 @@
+Metastock veri aktarým programý basit ve beleþ
