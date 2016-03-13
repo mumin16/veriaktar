@@ -3,18 +3,21 @@ void ComboDegisti(_In_ HWND   hwndDlg) {
 	SendDlgItemMessage(hwndDlg, IDC_SYMBOL1, LB_RESETCONTENT, 0, 0);
 	char c[256];
 	GetDlgItemText(hwndDlg, IDC_COMBO1, c, 256);
-	std::string str = c;
-	str.append(".txt");
-	std::string sLine = "";
-	std::ifstream infile;
-	infile.open(str.c_str());
-	while (!infile.eof())
-	{
-		getline(infile, sLine);
-		SendDlgItemMessage(hwndDlg, IDC_SYMBOL1, LB_ADDSTRING, 0, (LPARAM)sLine.c_str());
-	}
-	infile.close();
 
+
+		//SendDlgItemMessage(hwndDlg, IDC_SYMBOL1, LB_ADDSTRING, 0, (LPARAM)sLine.c_str());
+
+
+	for (std::vector<int>::size_type i = 0; i != sembollers.size(); i++) {
+		/* std::cout << someVector[i]; ... */
+		if (0 == strcmp(sembollers[i].listeismi, c)) {
+			for (std::vector<int>::size_type j = 0; j != sembollers[i].listedekisemboller.size(); j++) {
+				SendDlgItemMessage(hwndDlg, IDC_SYMBOL1, LB_ADDSTRING, 0, (LPARAM)sembollers[i].listedekisemboller[j].c_str());
+				
+			}
+		}
+		
+	}
 
 }
 void Ekle(_In_ HWND   hwndDlg) {

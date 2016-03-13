@@ -69,31 +69,7 @@ void xmaster_ekleguncelle(_In_  LPTSTR symbol, bool ekle) {
 }
 void master_ekleguncelle(_In_  LPTSTR symbol,bool ekle) {
 
-	if (ekle == TRUE) {
-		masterheader._totalfx[0] = masterheader.totalfx[0] = masterheader.totalfx[0] + 1;
-		SetFilePointer(hMFile, 0, 0, FILE_BEGIN);
-		WriteFile(
-			hMFile,           // open file handle
-			&masterheader,      // start of data to write
-			sizeof(masterheader),  // number of bytes to write
-			&dwBytesWritten, // number of bytes that were written
-			NULL);
-		SetFilePointer(hMFile, 0, 0, FILE_END);
-
-		master.fx[0] = masterheader.totalfx[0];
-		lstrcpy(master.secname, symbol);
-		lstrcpy(master.secsymbol, symbol);
-		memmove(master.fdate, fxs.front().date, 4);
-		memmove(master.ldate, fxs.back().date, 4);
-
-
-		WriteFile(
-			hMFile,           // open file handle
-			&master,      // start of data to write
-			sizeof(master),  // number of bytes to write
-			&dwBytesWritten, // number of bytes that were written
-			NULL);
-	}
+	
 
 	
 		char a[255] = "";
@@ -161,6 +137,28 @@ void VeriYaz(_In_ HWND   hwndDlg, _In_  LPTSTR symbol) {
 					CREATE_NEW,             // create new file only
 					FILE_ATTRIBUTE_NORMAL,  // normal file
 					NULL);                  // no attr. template
+				masterheader._totalfx[0] = masterheader.totalfx[0] = masterheader.totalfx[0] + 1;
+
+				WriteFile(
+					hMFile,           // open file handle
+					&masterheader,      // start of data to write
+					sizeof(masterheader),  // number of bytes to write
+					&dwBytesWritten, // number of bytes that were written
+					NULL);
+
+				master.fx[0] = masterheader.totalfx[0];
+				lstrcpy(master.secname, symbol);
+				lstrcpy(master.secsymbol, symbol);
+				memmove(master.fdate, fxs.front().date, 4);
+				memmove(master.ldate, fxs.back().date, 4);
+
+
+				WriteFile(
+					hMFile,           // open file handle
+					&master,      // start of data to write
+					sizeof(master),  // number of bytes to write
+					&dwBytesWritten, // number of bytes that were written
+					NULL);
 				master_ekleguncelle(symbol,TRUE);
 				return;
 	}

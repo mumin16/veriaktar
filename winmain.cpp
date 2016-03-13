@@ -92,8 +92,9 @@ char curdir[MAX_PATH];
 #include "portfoyyuklekaydet.h"
 #include "veriaktar.h"
 #include "veriindir.h"
+#include "bolunmeler.h"
+#include "semboller.h"
 #include "eklecikar.h"
-
 
 
 
@@ -127,35 +128,16 @@ INT_PTR CALLBACK DialogProc(
 			
 
 		}
-		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST30.txt", "BIST30.txt", 0, NULL);
-		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST50.txt", "BIST50.txt", 0, NULL);
-		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BIST100.txt", "BIST100.txt", 0, NULL);
-		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTTUM.txt", "BISTTUM.txt", 0, NULL);
-//		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BISTENDEKSLER.txt", "BISTENDEKSLER.txt", 0, NULL);
-		URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/BOLUNMELER.txt", "BOLUNMELER.txt", 0, NULL);
 
-		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST30");
-		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST50");
-		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BIST100");
-		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BISTTUM");
-//		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"BISTENDEKSLER");
-//		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"DUNYAENDEKSLER");
-		//SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)"PARITELER");
-		SendDlgItemMessage(hwndDlg, IDC_COMBO1, CB_SETCURSEL, 0, NULL);
+		CloseHandle(CreateThread(NULL, NULL, ThreadProcSemboller, hwndDlg, 0, 0));
+		CloseHandle(CreateThread(NULL, NULL, ThreadProcBolunmeler, hwndDlg, 0, 0));
+
+
+		
 
 
 
 		PostMessage(GetDlgItem(hwndDlg, IDC_CHECK1), BM_SETCHECK, BST_CHECKED, 0);
-
-		std::string sLine = "";
-		std::ifstream infile;
-		infile.open("BIST30.txt");
-		while (!infile.eof())
-		{
-			getline(infile, sLine);
-			SendDlgItemMessage(hwndDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)sLine.c_str());
-		}
-		infile.close();
 
 	
 		

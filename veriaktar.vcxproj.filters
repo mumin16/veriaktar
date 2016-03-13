@@ -36,6 +36,12 @@
     <ClInclude Include="veriaktar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bolunmeler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="semboller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
