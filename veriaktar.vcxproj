@@ -156,13 +156,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bolunmeler.h" />
-    <ClInclude Include="eklecikar.h" />
     <ClInclude Include="hakkinda.h" />
-    <ClInclude Include="msbinieee.h" />
-    <ClInclude Include="portfoyyuklekaydet.h" />
+    <ClInclude Include="Metastock.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="semboller.h" />
-    <ClInclude Include="veriaktar.h" />
     <ClInclude Include="veriindir.h" />
   </ItemGroup>
   <ItemGroup>

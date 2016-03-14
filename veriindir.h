@@ -1,4 +1,7 @@
 #pragma once
+FX fx;
+std::vector<FX> fxs;
+Metastock* ms;
 void VeriIndir(_In_ HWND   hwndDlg) {
 
 
@@ -12,6 +15,8 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 		return;
 	}
 
+
+	
 
 	char buffer[250];
 	std::string sLine = "";
@@ -27,13 +32,11 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 		sprintf(buffer, "http://www.google.com/finance/historical?output=csv&startdate=May+1%,+2010&enddate=&q=%s", buffer2);
 		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
 			//"Ok";
-
-
+			ms = new Metastock;
 			incsv.open(buffer2);
 			getline(incsv, sLine);//ilk satýrý al
 			while (!incsv.eof())
 			{
-				
 				
 				getline(incsv, sLine);
 				char sday[12], smonth[12], syear[12], sopen[12], shigh[12], slow[12], sclose[12], svol[12];
@@ -41,23 +44,23 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 				unsigned char ret[255];
 				float f = atof(sopen);
-				IEEEToBasic(&f, ret);
+				ms->IEEEToBasic(&f, ret);
 				memmove(fx.open, (LPCSTR)ret, 4);
 
 				f = atof(shigh);
-				IEEEToBasic(&f, ret);
+				ms->IEEEToBasic(&f, ret);
 				memmove(fx.high, (LPCSTR)ret, 4);
 
 				f = atof(slow);
-				IEEEToBasic(&f, ret);
+				ms->IEEEToBasic(&f, ret);
 				memmove(fx.low, (LPCSTR)ret, 4);
 
 				f = atof(sclose);
-				IEEEToBasic(&f, ret);
+				ms->IEEEToBasic(&f, ret);
 				memmove(fx.close, (LPCSTR)ret, 4);
 
 				f = atof(svol);
-				IEEEToBasic(&f, ret);
+				ms->IEEEToBasic(&f, ret);
 				memmove(fx.volume, (LPCSTR)ret, 4);
 
 				std::string date = std::to_string(atoi(syear) + 100);
@@ -80,33 +83,26 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 				date.append(sday);
 
 				f = atof(date.c_str());
-				IEEEToBasic(&f, ret);
+				ms->IEEEToBasic(&f, ret);
 				memmove(fx.date, (LPCSTR)ret, 4);
 			
 				fxs.push_back(fx);
 
 			}
 			std::reverse(fxs.begin(), fxs.end());    // 9 8 7 6 5 4 3 2 1
-			
-				if(fxs.size()<255)
-				{ 
-					fxheader.totalrecord[0] = fxs.size()  + 1;
-				}
-				else
-				{
-					unsigned char ret[255];
-					float f = fxs.size() + 1;
-					IEEEToBasic(&f, ret);
-					std::reverse(ret, ret + 4);
-					fxheader.totalrecord[0] = ret[1];
-					fxheader.totalrecord[1] = ret[0];
-				}
+	
 
-			
-			VeriYaz(hwndDlg, buffer2);
+
+				std::string dir = curdir;
+				if (0 != SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0))
+				{
+					dir.append("\\GUNLUK");
+				}
+				
+				ms->WriteSec(buffer2, fxs, dir.c_str());
+				delete ms;
+
 			fxs.clear();
-			ZeroMemory(&master, sizeof(MASTER));
-			ZeroMemory(&masterheader, sizeof(MASTER));
 			incsv.close();
 			DeleteFile(buffer2);
 			std::string a = buffer2;

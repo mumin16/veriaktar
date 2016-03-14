@@ -21,25 +21,16 @@
     <ClInclude Include="hakkinda.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="eklecikar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="portfoyyuklekaydet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="msbinieee.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="veriindir.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="veriaktar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="bolunmeler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="semboller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Metastock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
