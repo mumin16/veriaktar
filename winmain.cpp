@@ -103,6 +103,7 @@ int CALLBACK WinMain(
 	//float f = 1160309;//
 	//IEEEToBasic(&f, ret);
 	CreateDirectory("GUNLUK", 0);	
+	CreateDirectory("1DAKIKA", 0);
 	GetCurrentDirectory(MAX_PATH, curdir);
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
 

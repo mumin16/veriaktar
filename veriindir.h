@@ -13,10 +13,10 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 		return;
 	}
 
-	if (0 == SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0) && 0 == SendDlgItemMessage(hwndDlg, IDC_1DAKIKA, BM_GETCHECK, 0, 0)) {
-		MessageBox(hwndDlg, "Periyot secilmemis!", 0, MB_OK);
-		return;
-	}
+	//if (1 == SendDlgItemMessage(hwndDlg, IDC_1DAKIKA, BM_GETCHECK, 0, 0))	MessageBox(hwndDlg, "1Dakikalýk Periyot secilmis!", 0, MB_OK);
+	//if(1==SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0))	MessageBox(hwndDlg, "Günlük Periyot secilmis!", 0, MB_OK);
+		
+	
 
 
 	
@@ -31,6 +31,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 	for (size_t i = 0; i < length2; i++)
 	{
+		//http://www.google.com/finance/getprices?&i=60&p=1d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
 		sprintf(buffer, "http://www.google.com/finance/historical?output=csv&startdate=Mar+17%,+2014&enddate=&q=%s", buffer2);
 		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
@@ -42,6 +43,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 			{
 				
 				getline(incsv, sLine);
+				if (incsv.eof())break;
 				char sday[12], smonth[12], syear[12], sopen[12], shigh[12], slow[12], sclose[12], svol[12];
 				sscanf(sLine.c_str(), "%[^-]-%[^-]-%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", sday, smonth, syear, sopen, shigh, slow, sclose, svol);
 
@@ -90,6 +92,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 				memmove(fx.date, (LPCSTR)ret, 4);
 			
 				fxs.push_back(fx);
+				
 
 			}
 			std::reverse(fxs.begin(), fxs.end());    // 9 8 7 6 5 4 3 2 1

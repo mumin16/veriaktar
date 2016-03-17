@@ -54,8 +54,8 @@ struct XMASTER {
 }tagXMASTER;
 
 struct FXHEADER {
-	char unkown[2] = { 0 };
-	char totalrecord[2] = { 0 };//ters+1 ieee
+	unsigned __int16 unkown =  0 ;
+	unsigned __int16 totalrecord =  0 ;//ters+1 ieee deðil// +1 boþ satýr
 	char _unkown[20] = { 0 };
 }tagFXHEADER;
 
@@ -215,19 +215,13 @@ private:
 			FILE_ATTRIBUTE_NORMAL,  // normal file
 			NULL);                  // no attr. template
 
-		if (fxs.size()<255)
-		{
-			fxheader.totalrecord[0] = fxs.size() + 1;
-		}
-		else
-		{
-			unsigned char ret[255];
-			float f = fxs.size() + 1;
-			IEEEToBasic(&f, ret);
-			std::reverse(ret, ret + 4);
-			fxheader.totalrecord[0] = ret[1];
-			fxheader.totalrecord[1] = ret[0];
-		}
+	
+		
+
+			fxheader.totalrecord = fxs.size()+1;//+1 bir boþ satýr
+
+
+		
 		WriteFile(
 			hFXFile,           // open file handle
 			&fxheader,      // start of data to write
