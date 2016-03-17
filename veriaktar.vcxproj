@@ -34,7 +34,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>LLVM-vs2014</PlatformToolset>
+    <PlatformToolset>LLVM-vs2014_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
@@ -124,6 +124,7 @@
       <WholeProgramOptimization />
       <MinimalRebuild />
       <BufferSecurityCheck />
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,7 +157,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bolunmeler.h" />
-    <ClInclude Include="hakkinda.h" />
     <ClInclude Include="Metastock.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="semboller.h" />

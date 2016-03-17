@@ -34,11 +34,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\Release\veriaktar.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\veriaktar\BIST100.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\veriaktar\BIST30.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\veriaktar\BIST50.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\veriaktar\BISTENDEKSLER.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\veriaktar\BISTTUM.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\veriaktar\SEMBOLLER.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\veriaktar\BOLUNMELER.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\veriaktar\VERSIYON.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files

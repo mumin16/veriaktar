@@ -4,4 +4,7 @@
     <LocalDebuggerWorkingDirectory>C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\veriaktar</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup>
+    <ShowAllFiles>false</ShowAllFiles>
+  </PropertyGroup>
 </Project>

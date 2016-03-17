@@ -6,15 +6,12 @@
 #include <fstream>
 #include <string>
 #include <vector>
-//#pragma comment(linker, "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\"")
+
 
 char curdir[MAX_PATH];
 
 
-#include "hakkinda.h"
 #include "Metastock.h"
-
-
 #include "veriindir.h"
 #include "bolunmeler.h"
 #include "semboller.h"
@@ -73,7 +70,7 @@ INT_PTR CALLBACK DialogProc(
 			CloseHandle(CreateThread(NULL, NULL, ThreadProc, hwndDlg, 0, 0));
 			
 		}
-		else if (LOWORD(wParam) == IDR_HAKKINDA)Hakkinda(hwndDlg);
+		else if (LOWORD(wParam) == IDR_HAKKINDA)MessageBox(hwndDlg, "Mumin GULER\nmumin16@hotmail.com\nhttps://github.com/mumin16/veriaktar/\nhttp://veriaktar.blogspot.com.tr/", "Hakkinda", MB_OK);
 		else if (LOWORD(wParam) == IDR_PORTFOYYUKLE)PortfoyYukle(hwndDlg);
 		else if (LOWORD(wParam) == IDR_PORTFOYKAYDET)PortfoyKaydet(hwndDlg);
 		else if (LOWORD(wParam) == IDC_EKLE)Ekle(hwndDlg);
@@ -113,26 +110,3 @@ int CALLBACK WinMain(
 
 
 
-/*
-
-//MessageBox(hwndDlg, GetLastErrorAsString().c_str(), 0, 0);
-//Returns the last Win32 error, in string format. Returns an empty string if there is no error.
-std::string GetLastErrorAsString()
-{
-//Get the error message, if any.
-DWORD errorMessageID = ::GetLastError();
-if (errorMessageID == 0)
-return std::string(); //No error message has been recorded
-
-LPSTR messageBuffer = nullptr;
-size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
-
-std::string message(messageBuffer, size);
-
-//Free the buffer.
-LocalFree(messageBuffer);
-
-return message;
-}
-*/

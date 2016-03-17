@@ -2,6 +2,9 @@
 FX fx;
 std::vector<FX> fxs;
 Metastock* ms;
+
+std::vector<std::string> yuklenemeyenler;
+
 void VeriIndir(_In_ HWND   hwndDlg) {
 
 
@@ -29,7 +32,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 	for (size_t i = 0; i < length2; i++)
 	{
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
-		sprintf(buffer, "http://www.google.com/finance/historical?output=csv&startdate=May+1%,+2010&enddate=&q=%s", buffer2);
+		sprintf(buffer, "http://www.google.com/finance/historical?output=csv&startdate=Mar+17%,+2014&enddate=&q=%s", buffer2);
 		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
 			//"Ok";
 			ms = new Metastock;
@@ -106,23 +109,33 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 			incsv.close();
 			DeleteFile(buffer2);
 			std::string a = buffer2;
-			a.append(" yuklendi, aktarildi..");
+			a.append(" yuklendi, aktarildi...");
 			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+			
 		}
 		else {
-			MessageBox(hwndDlg, "Yukleme sirasinda hata", buffer2, MB_OK);
+			std::string a = buffer2;
+			a.append(" yuklenemedi...");
+			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+			yuklenemeyenler.push_back(buffer2);
 			continue;
 
 		}
 
+	
 
-		
 	}
 
 
+	SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_RESETCONTENT, 0, 0);
 
+	for (std::vector<int>::size_type i = 0; i != yuklenemeyenler.size(); i++) {
+		/* std::cout << someVector[i]; ... */
+		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_INSERTSTRING, 0, (LPARAM)yuklenemeyenler[i].c_str());
+	}
 
-
+	yuklenemeyenler.clear();
+	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"::::::::YUKLEME TAMAMLANDI::::::::");
 }
 
 
