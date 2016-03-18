@@ -21,7 +21,7 @@ void Bolunmeler(_In_ HWND   hwndDlg) {
 			sscanf(sLine.c_str(), "%[^,],%[^.].%[^.].%[^,],%[^,]", bolunme.shisse, bolunme.sday, bolunme.smonth, bolunme.syear, bolunme.soran);
 			bolunmes.push_back(bolunme);
 
-		std::reverse(bolunmes.begin(), bolunmes.end());    // 9 8 7 6 5 4 3 2 1
+		//std::reverse(bolunmes.begin(), bolunmes.end());    // 9 8 7 6 5 4 3 2 1
 	}
 }
 

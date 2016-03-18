@@ -1,10 +1,122 @@
 #pragma once
 FX fx;
 std::vector<FX> fxs;
+FXI fxi;
+std::vector<FXI> fxis;
 Metastock* ms;
 
 std::vector<std::string> yuklenemeyenler;
 
+void Dakikalikindir(_In_ HWND   hwndDlg) {
+	char buffer[250];
+	std::string smarketopenminute = "";
+	std::string sLine = "";
+	std::ifstream incsv;
+
+
+	char buffer2[255];
+	int length2 = SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETCOUNT, 0, 0);
+
+	for (size_t i = 0; i < length2; i++)
+	{
+		//http://www.google.com/finance/getprices?&i=60&p=1d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
+		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
+		sprintf(buffer, "http://www.google.com/finance/getprices?&i=60&p=2d&q=%s", buffer2);
+		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
+			//"Ok";
+			ms = new Metastock;
+			incsv.open(buffer2);
+			getline(incsv, sLine);//ilk8 satýrý al
+			getline(incsv, smarketopenminute);//ilk8 satýrý al
+			getline(incsv, sLine);//ilk8 satýrý al
+			getline(incsv, sLine);//ilk8 satýrý al
+			getline(incsv, sLine);//ilk8 satýrý al
+			getline(incsv, sLine);//ilk8 satýrý al
+			getline(incsv, sLine);//ilk8 satýrý al
+			getline(incsv, sLine);//ilk8 satýrý al
+			if (incsv.eof())return;
+			while (!incsv.eof())
+			{
+				
+				getline(incsv, sLine);
+				if (incsv.eof())break;
+				char sdate[12], sclose[12], shigh[12], slow[12], sopen[12], svolume[12];
+				sscanf(sLine.c_str(), "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", sdate, sclose, shigh, slow, sopen, svolume);
+
+				unsigned char ret[255];
+				float f = atof(sopen);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.open, (LPCSTR)ret, 4);
+
+				f = atof(shigh);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.high, (LPCSTR)ret, 4);
+
+				f = atof(slow);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.low, (LPCSTR)ret, 4);
+
+				f = atof(sclose);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.close, (LPCSTR)ret, 4);
+
+				f = atof(svolume);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.volume, (LPCSTR)ret, 4);
+
+				std::string date = "20160317";
+
+
+				f = atof(date.c_str());
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.date, (LPCSTR)ret, 4);
+
+				fxs.push_back(fx);
+
+
+			}
+			
+
+
+			std::string dir = curdir;
+	
+				dir.append("\\1DAKIKA");
+			
+
+			ms->WriteSec(buffer2, fxs, dir.c_str());
+			delete ms;
+
+			fxs.clear();
+			incsv.close();
+			DeleteFile(buffer2);
+			std::string a = buffer2;
+			a.append(" yuklendi, aktarildi...");
+			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+
+		}
+		else {
+			std::string a = buffer2;
+			a.append(" yuklenemedi...");
+			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+			yuklenemeyenler.push_back(buffer2);
+			continue;
+
+		}
+
+
+
+	}
+
+	SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_RESETCONTENT, 0, 0);
+
+	for (std::vector<int>::size_type i = 0; i != yuklenemeyenler.size(); i++) {
+		/* std::cout << someVector[i]; ... */
+		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_INSERTSTRING, 0, (LPARAM)yuklenemeyenler[i].c_str());
+	}
+
+	yuklenemeyenler.clear();
+	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"::::::::YUKLEME TAMAMLANDI::::::::");
+}
 void VeriIndir(_In_ HWND   hwndDlg) {
 
 
@@ -13,7 +125,12 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 		return;
 	}
 
-	//if (1 == SendDlgItemMessage(hwndDlg, IDC_1DAKIKA, BM_GETCHECK, 0, 0))	MessageBox(hwndDlg, "1Dakikalýk Periyot secilmis!", 0, MB_OK);
+	if (1 == SendDlgItemMessage(hwndDlg, IDC_1DAKIKA, BM_GETCHECK, 0, 0)) {  
+		Dakikalikindir(hwndDlg);
+		return;
+	}
+	
+	
 	//if(1==SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0))	MessageBox(hwndDlg, "Günlük Periyot secilmis!", 0, MB_OK);
 		
 	
@@ -100,10 +217,9 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 
 				std::string dir = curdir;
-				if (0 != SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0))
-				{
+				
 					dir.append("\\GUNLUK");
-				}
+			
 				
 				ms->WriteSec(buffer2, fxs, dir.c_str());
 				delete ms;

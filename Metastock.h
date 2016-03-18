@@ -69,7 +69,16 @@ struct FX {
 	char volume[4] = { 0 };//ieee
 
 }tagFX;
+struct FXI {
+	char date[4] = { 0 };//YYMMDD ieee  YY=yyyy- 1900 
+	char time[4] = { 0 };//2359000 ieee
+	char open[4] = { 0 };//ieee
+	char high[4] = { 0 };//ieee
+	char low[4] = { 0 };//ieee
+	char close[4] = { 0 };//ieee
+	char volume[4] = { 0 };//ieee
 
+}tagFXI;
 class Metastock
 {
 public:

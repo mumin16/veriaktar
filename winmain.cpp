@@ -19,7 +19,7 @@ char curdir[MAX_PATH];
 
 
 
-#define BUILDVERSION "1"
+#define BUILDVERSION "20160317"
 
 
 
@@ -88,7 +88,8 @@ INT_PTR CALLBACK DialogProc(
 	return false;
 }
 
-
+#include <time.h>
+#include <ctime>
 
 int CALLBACK WinMain(
 	_In_ HINSTANCE hInstance,
@@ -99,9 +100,8 @@ int CALLBACK WinMain(
 
 
 
-	//unsigned char ret[255];
-	//float f = 1160309;//
-	//IEEEToBasic(&f, ret);
+
+
 	CreateDirectory("GUNLUK", 0);	
 	CreateDirectory("1DAKIKA", 0);
 	GetCurrentDirectory(MAX_PATH, curdir);
