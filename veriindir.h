@@ -7,7 +7,10 @@ Metastock* ms;
 
 std::vector<std::string> yuklenemeyenler;
 
-
+char unformatteddate[12];
+std::string idate = "";
+std::string itime = "";
+struct tm* time_info;
 
 void Dakikalikindir(_In_ HWND   hwndDlg) {
 	char buffer[250];
@@ -22,9 +25,10 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 	{
 		//http://www.google.com/finance/getprices?&i=60&p=1d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
-		sprintf(buffer, "http://www.google.com/finance/getprices?&i=60&p=2d&q=%s", buffer2);
+		sprintf(buffer, "http://www.google.com/finance/getprices?&i=60&p=15d&q=%s", buffer2);
 		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
 			//"Ok";
+			
 			ms = new Metastock;
 			incsv.open(buffer2);
 			getline(incsv, sLine);//ilk8 satýrý al
@@ -35,13 +39,21 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 			getline(incsv, sLine);//ilk8 satýrý al
 			getline(incsv, sLine);//ilk8 satýrý al
 			getline(incsv, sLine);//ilk8 satýrý al
-			if (incsv.eof())return;
+			if (incsv.eof()) {
+				std::string a = buffer2;
+				a.append(" yuklenemedi...");
+				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+				yuklenemeyenler.push_back(buffer2);
+				incsv.close();
+				DeleteFile(buffer2);
+				continue;
+			}
 			while (!incsv.eof())
 			{
 				
 				getline(incsv, sLine);
 				if (incsv.eof())break;
-				char sdate[12], sclose[12], shigh[12], slow[12], sopen[12], svolume[12];
+				char sdate[255], sclose[255], shigh[255], slow[255], sopen[255], svolume[255];
 				sscanf(sLine.c_str(), "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", sdate, sclose, shigh, slow, sopen, svolume);
 
 				unsigned char ret[255];
@@ -65,15 +77,50 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 				ms->IEEEToBasic(&f, ret);
 				memmove(fxi.volume, (LPCSTR)ret, 4);
 
-				std::string date = "20160317";
+				
+				if (0 == strncmp(sdate, "a", 1))
+				{
+				strcpy(sdate, sdate + 1);
+				strcpy(unformatteddate, sdate );
+				
+				time_t timeNow= atol(sdate);
+				time_info= localtime(&timeNow);
 
+				idate = std::to_string(time_info->tm_year);
+				if (time_info->tm_mon+1 <10)idate.append("0");
+				idate.append(std::to_string(time_info->tm_mon+1));
+				if (time_info->tm_mday <10)idate.append("0");
+				idate.append(std::to_string(time_info->tm_mday));
+				
+				itime = std::to_string(time_info->tm_hour);
+				if (time_info->tm_min <10)itime.append("0");
+				itime.append(std::to_string(time_info->tm_min));
+				itime.append("00");
 
-				f = atof(date.c_str());
+				
+				}
+				else {
+					time_t timeNow = atol(unformatteddate)+60* atoi(sdate);
+					time_info = localtime(&timeNow);
+
+					idate = std::to_string(time_info->tm_year);
+					if (time_info->tm_mon + 1 <10)idate.append("0");
+					idate.append(std::to_string(time_info->tm_mon + 1));
+					if (time_info->tm_mday <10)idate.append("0");
+					idate.append(std::to_string(time_info->tm_mday));
+
+					itime = std::to_string(time_info->tm_hour);
+					if (time_info->tm_min <10)itime.append("0");
+					itime.append(std::to_string(time_info->tm_min));
+					itime.append("00");
+				}
+
+				f = atof(idate.c_str());
 				ms->IEEEToBasic(&f, ret);
 				memmove(fxi.date, (LPCSTR)ret, 4);
 
 
-				f = atof("0000000");
+				f = atof(itime.c_str());
 				ms->IEEEToBasic(&f, ret);
 				memmove(fxi.time, (LPCSTR)ret, 4);
 

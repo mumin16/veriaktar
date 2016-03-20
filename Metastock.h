@@ -9,8 +9,8 @@ struct MASTERHEADER {
 struct MASTER {
 	unsigned __int8 fx =  0 ;
 	char unknown[2] = { 0 };
-	const unsigned __int8 fieldssize=24;//intradayda 7kolonsayisi*4=28
-	const unsigned __int8 fieldsnumber = 6;//intradayda 7kolon date-time-o-h-l-c-v
+	unsigned __int8 fieldssize=24;//intradayda 7kolonsayisi*4=28
+	unsigned __int8 fieldsnumber = 6;//intradayda 7kolon date-time-o-h-l-c-v
 	char ___unknown[2] = { 0 };
 	char secname[16] = { 0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20 };
 	char _unknown[2] = { 0 };
@@ -76,7 +76,7 @@ struct FXIHEADER {
 }tagFXIHEADER;
 struct FXI {
 	char date[4] = { 0 };//YYMMDD ieee  YY=yyyy- 1900 
-	char time[4] = { 0 };//2359000 ieee
+	char time[4] = { 0 };//235900 ieee
 	char open[4] = { 0 };//ieee
 	char high[4] = { 0 };//ieee
 	char low[4] = { 0 };//ieee
@@ -539,6 +539,11 @@ private:
 				&dwBytesWritten, // number of bytes that were written
 				NULL);
 
+			master.fieldssize = 28;
+			master.fieldsnumber = 7;
+			master.period[0] = 'I';
+			master.timeframe[0] = 1;
+
 			master.fx = 1;
 			memset(master.secname, 0x20, 16);
 			memmove(master.secname, symbolname, lstrlen(symbolname));
@@ -630,6 +635,8 @@ private:
 					NULL);                  // no attr. template
 
 
+
+
 				xmasterheader.comingasfx_mwd = 257;
 				xmasterheader._totalfx_mwd = 1;
 				xmasterheader.totalfx_mwd = 1;
@@ -641,6 +648,9 @@ private:
 					&dwBytesWritten, // number of bytes that were written
 					NULL);
 
+				xmaster.period = 'I';
+				xmaster.timeframe = 1;
+				xmaster._unknown = 0xbf000000;
 
 				xmaster.fx = xmasterheader.comingasfx_mwd - 1;
 				memset(master.secname, 0x20, 16);

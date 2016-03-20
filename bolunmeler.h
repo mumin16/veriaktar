@@ -6,6 +6,9 @@ struct BOLUNME
 
 BOLUNME bolunme;
 std::vector <BOLUNME> bolunmes;
+
+
+
 void Bolunmeler(_In_ HWND   hwndDlg) {
 	std::string sLine = "";
 	std::ifstream incsv;

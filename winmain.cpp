@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <time.h>
 
 
 char curdir[MAX_PATH];
@@ -87,8 +88,7 @@ INT_PTR CALLBACK DialogProc(
 	return false;
 }
 
-#include <time.h>
-#include <ctime>
+
 
 int CALLBACK WinMain(
 	_In_ HINSTANCE hInstance,
