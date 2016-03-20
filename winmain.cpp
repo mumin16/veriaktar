@@ -10,16 +10,15 @@
 
 char curdir[MAX_PATH];
 
-
+#include "bolunmeler.h"
 #include "Metastock.h"
 #include "veriindir.h"
-#include "bolunmeler.h"
 #include "semboller.h"
 
 
 
 
-#define BUILDVERSION "20160317"
+#define BUILDVERSION "20160321"
 
 
 

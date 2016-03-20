@@ -7,9 +7,10 @@ Metastock* ms;
 
 std::vector<std::string> yuklenemeyenler;
 
+
+
 void Dakikalikindir(_In_ HWND   hwndDlg) {
 	char buffer[250];
-	std::string smarketopenminute = "";
 	std::string sLine = "";
 	std::ifstream incsv;
 
@@ -27,7 +28,7 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 			ms = new Metastock;
 			incsv.open(buffer2);
 			getline(incsv, sLine);//ilk8 satýrý al
-			getline(incsv, smarketopenminute);//ilk8 satýrý al
+			getline(incsv, sLine);//ilk8 satýrý al
 			getline(incsv, sLine);//ilk8 satýrý al
 			getline(incsv, sLine);//ilk8 satýrý al
 			getline(incsv, sLine);//ilk8 satýrý al
@@ -46,32 +47,37 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 				unsigned char ret[255];
 				float f = atof(sopen);
 				ms->IEEEToBasic(&f, ret);
-				memmove(fx.open, (LPCSTR)ret, 4);
+				memmove(fxi.open, (LPCSTR)ret, 4);
 
 				f = atof(shigh);
 				ms->IEEEToBasic(&f, ret);
-				memmove(fx.high, (LPCSTR)ret, 4);
+				memmove(fxi.high, (LPCSTR)ret, 4);
 
 				f = atof(slow);
 				ms->IEEEToBasic(&f, ret);
-				memmove(fx.low, (LPCSTR)ret, 4);
+				memmove(fxi.low, (LPCSTR)ret, 4);
 
 				f = atof(sclose);
 				ms->IEEEToBasic(&f, ret);
-				memmove(fx.close, (LPCSTR)ret, 4);
+				memmove(fxi.close, (LPCSTR)ret, 4);
 
 				f = atof(svolume);
 				ms->IEEEToBasic(&f, ret);
-				memmove(fx.volume, (LPCSTR)ret, 4);
+				memmove(fxi.volume, (LPCSTR)ret, 4);
 
 				std::string date = "20160317";
 
 
 				f = atof(date.c_str());
 				ms->IEEEToBasic(&f, ret);
-				memmove(fx.date, (LPCSTR)ret, 4);
+				memmove(fxi.date, (LPCSTR)ret, 4);
 
-				fxs.push_back(fx);
+
+				f = atof("0000000");
+				ms->IEEEToBasic(&f, ret);
+				memmove(fxi.time, (LPCSTR)ret, 4);
+
+				fxis.push_back(fxi);
 
 
 			}
@@ -83,10 +89,10 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 				dir.append("\\1DAKIKA");
 			
 
-			ms->WriteSec(buffer2, fxs, dir.c_str());
+			ms->WriteSeci(buffer2, fxis, dir.c_str());
 			delete ms;
 
-			fxs.clear();
+			fxis.clear();
 			incsv.close();
 			DeleteFile(buffer2);
 			std::string a = buffer2;
@@ -150,9 +156,12 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 	{
 		//http://www.google.com/finance/getprices?&i=60&p=1d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
-		sprintf(buffer, "http://www.google.com/finance/historical?output=csv&startdate=Mar+17%,+2014&enddate=&q=%s", buffer2);
+		sprintf(buffer, "http://www.google.com/finance/historical?output=csv&startdate=Mar+21%,+2011&enddate=&q=%s", buffer2);
 		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
 			//"Ok";
+
+
+
 			ms = new Metastock;
 			incsv.open(buffer2);
 			getline(incsv, sLine);//ilk satýrý al
@@ -165,28 +174,8 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 				sscanf(sLine.c_str(), "%[^-]-%[^-]-%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", sday, smonth, syear, sopen, shigh, slow, sclose, svol);
 
 				unsigned char ret[255];
-				float f = atof(sopen);
-				ms->IEEEToBasic(&f, ret);
-				memmove(fx.open, (LPCSTR)ret, 4);
-
-				f = atof(shigh);
-				ms->IEEEToBasic(&f, ret);
-				memmove(fx.high, (LPCSTR)ret, 4);
-
-				f = atof(slow);
-				ms->IEEEToBasic(&f, ret);
-				memmove(fx.low, (LPCSTR)ret, 4);
-
-				f = atof(sclose);
-				ms->IEEEToBasic(&f, ret);
-				memmove(fx.close, (LPCSTR)ret, 4);
-
-				f = atof(svol);
-				ms->IEEEToBasic(&f, ret);
-				memmove(fx.volume, (LPCSTR)ret, 4);
-
 				std::string date = std::to_string(atoi(syear) + 100);
-						
+
 				if (0 == lstrcmp(smonth, "Jan")) lstrcpy(smonth, "01");
 				if (0 == lstrcmp(smonth, "Feb")) lstrcpy(smonth, "02");
 				if (0 == lstrcmp(smonth, "Mar")) lstrcpy(smonth, "03");
@@ -204,9 +193,46 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 				if (1 == lstrlen(sday))date.append("0");
 				date.append(sday);
 
-				f = atof(date.c_str());
+				float f = atof(date.c_str());
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.date, (LPCSTR)ret, 4);
+
+				float ratio=1.0;
+				//for (std::vector<int>::size_type i = 0; i != bolunmes.size(); i++) 
+				//{
+				//	/* std::cout << someVector[i]; ... */
+				//	if (0 == lstrcmp(bolunmes[i].shisse, buffer2)) {
+				//		int k= atoi(bolunmes[i].sdate) - 19000000-1;
+				//		int l = atoi(date.c_str());
+				//		if (k >= l){
+				//			ratio = ratio*atof(bolunmes[i].soran);
+				//			continue;
+				//		}
+
+				//	}
+				//}
+				
+				f = atof(sopen)*ratio;
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.open, (LPCSTR)ret, 4);
+
+				f = atof(shigh)*ratio;
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.high, (LPCSTR)ret, 4);
+
+				f = atof(slow)*ratio;
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.low, (LPCSTR)ret, 4);
+
+				f = atof(sclose)*ratio;
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.close, (LPCSTR)ret, 4);
+
+				f = atof(svol)*ratio;
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.volume, (LPCSTR)ret, 4);
+
+
 			
 				fxs.push_back(fx);
 				

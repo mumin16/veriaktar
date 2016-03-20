@@ -1,7 +1,7 @@
 #pragma once
 struct BOLUNME
 {
-	char shisse[12], sday[12], smonth[12], syear[12], soran[12];
+	char shisse[12], soran[12], sdate[12];
 }tagBOLUNME;
 
 BOLUNME bolunme;
@@ -18,11 +18,11 @@ void Bolunmeler(_In_ HWND   hwndDlg) {
 		while (!incsv.eof())
 		{
 			getline(incsv, sLine);
-			sscanf(sLine.c_str(), "%[^,],%[^.].%[^.].%[^,],%[^,]", bolunme.shisse, bolunme.sday, bolunme.smonth, bolunme.syear, bolunme.soran);
+			sscanf(sLine.c_str(), "%[^;];%[^;];%[^;]", bolunme.shisse, bolunme.soran, bolunme.sdate);
 			bolunmes.push_back(bolunme);
 
-		//std::reverse(bolunmes.begin(), bolunmes.end());    // 9 8 7 6 5 4 3 2 1
-	}
+		}
+		std::reverse(bolunmes.begin(), bolunmes.end());    // 9 8 7 6 5 4 3 2 1
 }
 
 DWORD WINAPI ThreadProcBolunmeler(
