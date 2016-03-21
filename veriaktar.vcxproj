@@ -156,6 +156,7 @@
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ayarlar.h" />
     <ClInclude Include="bolunmeler.h" />
     <ClInclude Include="Metastock.h" />
     <ClInclude Include="resource.h" />

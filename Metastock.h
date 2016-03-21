@@ -88,125 +88,45 @@ class Metastock
 {
 public:
 	float BasicToIEEE(unsigned char *value)
-
 	{
 		float result;
-
 		unsigned char *msbin = (unsigned char *)value;
-
 		unsigned char *ieee = (unsigned char *)&result;
-
 		unsigned char sign = 0x00;
-
 		unsigned char ieee_exp = 0x00;
-
 		int i;
-
-		/* MS Binary Format */
-
-		/* byte order => m3 | m2 | m1 | exponent */
-
-		/* m1 is most significant byte => sbbb|bbbb */
-
-		/* m3 is the least significant byte */
-
-		/* m = mantissa byte */
-
-		/* s = sign bit */
-
-		/* b = bit */
-
-		sign = msbin[2] & 0x80; /* 1000|0000b */
-
-								/* IEEE Single Precision Float Format */
-
-								/* m3 m2 m1 exponent */
-
-								/* mmmm|mmmm mmmm|mmmm emmm|mmmm seee|eeee */
-
-								/* s = sign bit */
-
-								/* e = exponent bit */
-
-								/* m = mantissa bit */
-
+		sign = msbin[2] & 0x80;
 		for (i = 0; i<4; i++) ieee[i] = 0;
-
-		/* any msbin w/ exponent of zero = zero */
-
 		if (msbin[3] == 0) return 0;
-
 		ieee[3] |= sign;
-
-		/* MBF is bias 128 and IEEE is bias 127. ALSO, MBF places */
-
-		/* the decimal point before the assumed bit, while */
-
-		/* IEEE places the decimal point after the assumed bit. */
-
-		ieee_exp = msbin[3] - 2; /* actually, msbin[3]-1-128+127 */
-
-								 /* the first 7 bits of the exponent in ieee[3] */
-
+		ieee_exp = msbin[3] - 2; 
 		ieee[3] |= ieee_exp >> 1;
-
-		/* the one remaining bit in first bin of ieee[2] */
-
 		ieee[2] |= ieee_exp << 7;
-
-		/* 0111|1111b : mask out the msbin sign bit */
-
 		ieee[2] |= msbin[2] & 0x7f;
-
 		ieee[1] = msbin[1];
-
 		ieee[0] = msbin[0];
-
 		return (result);
-
 	}
 
 	bool IEEEToBasic(float *value, unsigned char *result)
-
 	{
 		unsigned char *ieee = (unsigned char *)value;
-
 		unsigned char *msbin = (unsigned char *)result;
-
 		unsigned char sign = 0x00;
-
 		unsigned char msbin_exp = 0x00;
-
 		int i;
-
-		/* See _fmsbintoieee() for details of formats */
-
 		sign = ieee[3] & 0x80;
-
 		msbin_exp |= ieee[3] << 1;
-
 		msbin_exp |= ieee[2] >> 7;
-
-		/* An ieee exponent of 0xfe overflows in MBF */
-
 		if (msbin_exp == 0xfe) return (FALSE);
-
-		msbin_exp += 2; /* actually, -127 + 128 + 1 */
-
+		msbin_exp += 2; 
 		for (i = 0; i<4; i++) msbin[i] = 0;
-
 		msbin[3] = msbin_exp;
-
 		msbin[2] |= sign;
-
 		msbin[2] |= ieee[2] & 0x7f;
-
 		msbin[1] = ieee[1];
-
 		msbin[0] = ieee[0];
-
 		return (TRUE);
-
 	}
 private:
 
@@ -216,81 +136,29 @@ private:
 	MASTER master;
 	XMASTERHEADER xmasterheader;
 	XMASTER xmaster ;
-	void FxiYarat(const char* filename, std::vector<FXI> fxis) {
-		FXIHEADER fxiheader;
-		FXI fx;
 
-		hFXFile = CreateFile(filename,                // name of the write
-			GENERIC_READ | GENERIC_WRITE,          // open for writing
-			FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,                      // do not share
-			NULL,                   // default security
-			CREATE_ALWAYS,             // create new file only
-			FILE_ATTRIBUTE_NORMAL,  // normal file
-			NULL);                  // no attr. template
-
-
-
-
-		fxiheader.totalrecord = fxis.size() + 1;//+1 bir boþ satýr
-
-
-
-		WriteFile(
-			hFXFile,           // open file handle
-			&fxiheader,      // start of data to write
-			sizeof(fxiheader),  // number of bytes to write
-			&dwBytesWritten, // number of bytes that were written
-			NULL);
-
-		WriteFile(
-			hFXFile,           // open file handle
-			fxis.data(),      // start of data to write
-			fxis.size() * sizeof(FXI),  // number of bytes to write
-			&dwBytesWritten, // number of bytes that were written
-			NULL);
-
-
-		CloseHandle(hFXFile);
-
-	}
-	void FxYarat(const char* filename, std::vector<FX> fxs) {
+	void FxYarat(const char* filename, std::vector<FX> fxs, std::vector<FXI> fxis,bool bintraday=0) {
 		FXHEADER fxheader;
-		FX fx;
+		FXIHEADER fxiheader;
 
-		hFXFile = CreateFile(filename,                // name of the write
-			GENERIC_READ | GENERIC_WRITE,          // open for writing
-			FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,                      // do not share
-			NULL,                   // default security
-			CREATE_ALWAYS,             // create new file only
-			FILE_ATTRIBUTE_NORMAL,  // normal file
-			NULL);                  // no attr. template
+		std::ofstream ofs;
+		ofs.open(filename, std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+		if (bintraday == TRUE) 
+		{
+			fxiheader.totalrecord = fxis.size() + 1;//+1 bir boþ satýr
+			ofs.write((const char*)&fxiheader, sizeof(fxiheader));
+			ofs.write((const char*)fxis.data(), fxis.size() * sizeof(FXI));
+		}
+		else
+		{
+			fxheader.totalrecord = fxs.size() + 1;//+1 bir boþ satýr
+			ofs.write((const char*)&fxheader, sizeof(fxheader));
+			ofs.write((const char*)fxs.data(), fxs.size() * sizeof(FX));
+		}
 
-	
-		
-
-			fxheader.totalrecord = fxs.size()+1;//+1 bir boþ satýr
-
-
-		
-		WriteFile(
-			hFXFile,           // open file handle
-			&fxheader,      // start of data to write
-			sizeof(fxheader),  // number of bytes to write
-			&dwBytesWritten, // number of bytes that were written
-			NULL);
-
-		WriteFile(
-			hFXFile,           // open file handle
-			fxs.data(),      // start of data to write
-			fxs.size() * sizeof(FX),  // number of bytes to write
-			&dwBytesWritten, // number of bytes that were written
-			NULL);
-
-
-		CloseHandle(hFXFile);
-	
+		ofs.close();
 	}
-	void OpenReadWrite(char* symbolname, std::vector<FX> fxs) {
+	void OpenReadWrite(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis) {
 
 
 		// master aç
@@ -327,7 +195,7 @@ private:
 				sizeof(master),  // number of bytes to write
 				&dwBytesWritten, // number of bytes that were written
 				NULL);
-			FxYarat("F1.DAT",fxs);
+			FxYarat("F1.DAT",fxs,fxis,FALSE);
 			CloseHandle(hMFile);
 			return;
 		}
@@ -351,7 +219,7 @@ private:
 						&dwBytesWritten, // number of bytes that were written
 						NULL);
 					std::string a = "F" + std::to_string(master.fx) + ".DAT";
-					FxYarat(a.c_str(), fxs);
+					FxYarat(a.c_str(), fxs,fxis,FALSE);
 					CloseHandle(hMFile);
 					return;
 				}
@@ -381,7 +249,7 @@ private:
 						&dwBytesWritten, // number of bytes that were written
 						NULL);
 					std::string a= "F"+std::to_string(master.fx)+".DAT";
-					FxYarat(a.c_str(), fxs);
+					FxYarat(a.c_str(), fxs,fxis,FALSE);
 					CloseHandle(hMFile);
 					return;
 			}
@@ -436,7 +304,7 @@ private:
 						sizeof(xmaster),  // number of bytes to write
 						&dwBytesWritten, // number of bytes that were written
 						NULL);
-					FxYarat("F256.MWD", fxs);
+					FxYarat("F256.MWD", fxs,fxis,FALSE);
 					CloseHandle(hXMFile);
 					return;
 				}
@@ -465,7 +333,7 @@ private:
 							&dwBytesWritten, // number of bytes that were written
 							NULL);
 						std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
-						FxYarat(a.c_str(), fxs);
+						FxYarat(a.c_str(), fxs,fxis,FALSE);
 						CloseHandle(hXMFile);
 						return;
 					}
@@ -506,7 +374,7 @@ private:
 					&dwBytesWritten, // number of bytes that were written
 					NULL);
 				std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
-				FxYarat(a.c_str(), fxs);
+				FxYarat(a.c_str(), fxs,fxis,FALSE);
 				CloseHandle(hXMFile);
 				return;
 
@@ -515,7 +383,7 @@ private:
 	}
 
 
-	void OpenReadWritei(char* symbolname, std::vector<FXI> fxis) {
+	void OpenReadWritei(char* symbolname, std::vector<FX> fxs,std::vector<FXI> fxis) {
 
 
 		// master aç
@@ -557,7 +425,7 @@ private:
 				sizeof(master),  // number of bytes to write
 				&dwBytesWritten, // number of bytes that were written
 				NULL);
-			FxiYarat("F1.DAT", fxis);
+			FxYarat("F1.DAT", fxs,fxis,TRUE);
 			CloseHandle(hMFile);
 			return;
 		}
@@ -581,7 +449,7 @@ private:
 						&dwBytesWritten, // number of bytes that were written
 						NULL);
 					std::string a = "F" + std::to_string(master.fx) + ".DAT";
-					FxiYarat(a.c_str(), fxis);
+					FxYarat(a.c_str(),fxs, fxis,TRUE);
 					CloseHandle(hMFile);
 					return;
 				}
@@ -611,7 +479,7 @@ private:
 					&dwBytesWritten, // number of bytes that were written
 					NULL);
 				std::string a = "F" + std::to_string(master.fx) + ".DAT";
-				FxiYarat(a.c_str(), fxis);
+				FxYarat(a.c_str(), fxs,fxis,TRUE);
 				CloseHandle(hMFile);
 				return;
 			}
@@ -671,7 +539,7 @@ private:
 					sizeof(xmaster),  // number of bytes to write
 					&dwBytesWritten, // number of bytes that were written
 					NULL);
-				FxiYarat("F256.MWD", fxis);
+				FxYarat("F256.MWD", fxs,fxis,TRUE);
 				CloseHandle(hXMFile);
 				return;
 			}
@@ -700,7 +568,7 @@ private:
 						&dwBytesWritten, // number of bytes that were written
 						NULL);
 					std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
-					FxiYarat(a.c_str(), fxis);
+					FxYarat(a.c_str(), fxs,fxis,TRUE);
 					CloseHandle(hXMFile);
 					return;
 				}
@@ -741,7 +609,7 @@ private:
 				&dwBytesWritten, // number of bytes that were written
 				NULL);
 			std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
-			FxiYarat(a.c_str(), fxis);
+			FxYarat(a.c_str(), fxs,fxis,TRUE);
 			CloseHandle(hXMFile);
 			return;
 
@@ -759,22 +627,22 @@ public:
 	}
 
 
-	void WriteSec(char* symbolname, std::vector<FX> fxs,const char* workingdir) {
+	void WriteSec(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis, const char* workingdir) {
 		char curdir[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, curdir);
 		SetCurrentDirectory(workingdir);
 
-		OpenReadWrite(symbolname,fxs);
+		OpenReadWrite(symbolname,fxs,fxis);
 
 
 		SetCurrentDirectory(curdir);
 	}
-	void WriteSeci(char* symbolname, std::vector<FXI> fxis, const char* workingdir) {
+	void WriteSeci(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis, const char* workingdir) {
 		char curdir[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, curdir);
 		SetCurrentDirectory(workingdir);
 
-		OpenReadWritei(symbolname, fxis);
+		OpenReadWritei(symbolname, fxs,fxis);
 
 
 		SetCurrentDirectory(curdir);

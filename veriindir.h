@@ -136,7 +136,7 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 				dir.append("\\1DAKIKA");
 			
 
-			ms->WriteSeci(buffer2, fxis, dir.c_str());
+			ms->WriteSeci(buffer2, fxs,fxis, dir.c_str());
 			delete ms;
 
 			fxis.clear();
@@ -294,7 +294,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 					dir.append("\\GUNLUK");
 			
 				
-				ms->WriteSec(buffer2, fxs, dir.c_str());
+				ms->WriteSec(buffer2, fxs,fxis, dir.c_str());
 				delete ms;
 
 			fxs.clear();
