@@ -16,7 +16,7 @@ char curdir[MAX_PATH];
 #include "semboller.h"
 #include "ayarlar.h"
 
-#define BUILDVERSION "20160321"
+#define BUILDVERSION "20160322"
 
 INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wParam,_In_ LPARAM lParam)
 {
@@ -28,7 +28,7 @@ INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wPa
 				std::ifstream infile;
 				infile.open("versiyon.txt");
 				getline(infile, sLine);
-				if(lstrcmp(sLine.c_str(),BUILDVERSION)>0)MessageBox(hwndDlg,"Yeni Güncelleme var!","Bilgi",MB_OK);
+				if(lstrcmp(sLine.c_str(),BUILDVERSION)>0)MessageBox(hwndDlg,"Yeni Guncelleme var!","Bilgi",MB_OK);
 			}
 			else {
 				MessageBox(hwndDlg, "Versiyon Kontrolu Yapılamadı\n Son Sürümü kullandığınıza emin olun\n internet bağlantısını kontrol edin", 0, MB_OK);

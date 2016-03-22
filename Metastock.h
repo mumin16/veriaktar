@@ -130,7 +130,7 @@ public:
 	}
 private:
 
-	HANDLE hMFile = 0, hXMFile = 0, hFXFile = 0;
+	HANDLE hMFile = 0, hXMFile = 0;
 	DWORD dwBytesWritten = 0;
 	MASTERHEADER masterheader;
 	MASTER master;
