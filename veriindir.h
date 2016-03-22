@@ -129,7 +129,19 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 
 			}
 			
+			if (fxis.size() == 0) {
+				std::string a = buffer2;
+				a.append(" yuklenemedi...");
+				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+				yuklenemeyenler.push_back(buffer2);
+				delete ms;
 
+				fxis.clear();
+				incsv.close();
+				DeleteFile(buffer2);
+				continue;
+
+			}
 
 			std::string dir = curdir;
 	
@@ -287,7 +299,19 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 			}
 			std::reverse(fxs.begin(), fxs.end());    // 9 8 7 6 5 4 3 2 1
 	
+		if(fxs.size()==0) {
+			std::string a = buffer2;
+			a.append(" yuklenemedi...");
+			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+			yuklenemeyenler.push_back(buffer2);
+			delete ms;
 
+			fxs.clear();
+			incsv.close();
+			DeleteFile(buffer2);
+			continue;
+
+		}
 
 				std::string dir = curdir;
 				
