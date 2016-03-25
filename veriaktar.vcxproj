@@ -159,6 +159,7 @@
     <ClInclude Include="ayarlar.h" />
     <ClInclude Include="bolunmeler.h" />
     <ClInclude Include="Metastock.h" />
+    <ClInclude Include="mtaktar.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="semboller.h" />
     <ClInclude Include="veriindir.h" />

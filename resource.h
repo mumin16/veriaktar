@@ -29,13 +29,15 @@
 #define IDR_PORTFOYKAYDET               40006
 #define ID_AYARLAR                      40013
 #define IDR_AYARLAR                     40014
+#define ID_METATRADERAKTAR              40015
+#define IDR_METATRADERAKTAR             40016
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        108
-#define _APS_NEXT_COMMAND_VALUE         40015
+#define _APS_NEXT_COMMAND_VALUE         40017
 #define _APS_NEXT_CONTROL_VALUE         1021
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

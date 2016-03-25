@@ -14,9 +14,10 @@ char curdir[MAX_PATH];
 #include "Metastock.h"
 #include "veriindir.h"
 #include "semboller.h"
+#include "mtaktar.h"
 #include "ayarlar.h"
 
-#define BUILDVERSION "20160322"
+#define BUILDVERSION "20160325"
 
 INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wParam,_In_ LPARAM lParam)
 {
@@ -46,6 +47,7 @@ INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wPa
 				CloseHandle(CreateThread(NULL, NULL, ThreadProc, hwndDlg, 0, 0));
 			}
 			else if (LOWORD(wParam) == IDR_HAKKINDA)MessageBox(hwndDlg, "Mumin GULER\nmumin16@hotmail.com\nhttps://github.com/mumin16/veriaktar/\nhttp://veriaktar.blogspot.com.tr/", "Hakkinda", MB_OK);
+			else if (LOWORD(wParam) == IDR_METATRADERAKTAR)mtaktar(hwndDlg);
 			else if (LOWORD(wParam) == IDR_PORTFOYYUKLE)PortfoyYukle(hwndDlg);
 			else if (LOWORD(wParam) == IDR_PORTFOYKAYDET)PortfoyKaydet(hwndDlg);
 			else if (LOWORD(wParam) == IDR_AYARLAR)Ayarlar(hwndDlg);
@@ -72,6 +74,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance,_In_ HINSTANCE hPrevInstance,_In_ 
 	GetCurrentDirectory(MAX_PATH, curdir);
 	CreateDirectory("GUNLUK", 0);	
 	CreateDirectory("1DAKIKA", 0);
+	CreateDirectory("METATRADER", 0);
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
 }
 
