@@ -1,1 +1,1 @@
-Metastock veri aktarým programý basit ve beleþ
+Metastock Metatrader veri aktarým programý basit ve beleþ
