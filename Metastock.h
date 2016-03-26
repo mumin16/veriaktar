@@ -137,7 +137,7 @@ private:
 	XMASTERHEADER xmasterheader;
 	XMASTER xmaster ;
 
-	void FxYarat(const char* filename, std::vector<FX> fxs, std::vector<FXI> fxis,bool bintraday=0) {
+	void FxYarat(const char* filename, std::vector<FX> fxs, std::vector<FXI> fxis,bool bintraday) {
 		FXHEADER fxheader;
 		FXIHEADER fxiheader;
 
@@ -158,482 +158,7 @@ private:
 
 		ofs.close();
 	}
-	void OpenReadWrite(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis) {
 
-
-		// master aç
-		hMFile = CreateFile("MASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hMFile == INVALID_HANDLE_VALUE)
-		{
-			//readonly olabilir
-			hMFile = CreateFile("MASTER", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		}
-		//master yok
-		if (hMFile == INVALID_HANDLE_VALUE)
-		{
-			hMFile = CreateFile("MASTER",                // name of the write
-				GENERIC_READ | GENERIC_WRITE,          // open for writing
-				FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,                      // do not share
-				NULL,                   // default security
-				CREATE_NEW,             // create new file only
-				FILE_ATTRIBUTE_NORMAL,  // normal file
-				NULL);                  // no attr. template
-
-			masterheader.totalfx = masterheader.lastaddedfx = 1;
-			WriteFile(
-				hMFile,           // open file handle
-				&masterheader,      // start of data to write
-				sizeof(masterheader),  // number of bytes to write
-				&dwBytesWritten, // number of bytes that were written
-				NULL);
-
-			master.fx = 1;
-			memset(master.secname, 0x20, 16);
-			memmove(master.secname, symbolname, lstrlen(symbolname));
-			memset(master.secsymbol, 0x20, 16);
-			memmove(master.secsymbol, symbolname,lstrlen(symbolname));
-			memmove(master.fdate, fxs.front().date, 4);
-			memmove(master.ldate, fxs.back().date, 4);
-			WriteFile(
-				hMFile,           // open file handle
-				&master,      // start of data to write
-				sizeof(master),  // number of bytes to write
-				&dwBytesWritten, // number of bytes that were written
-				NULL);
-			FxYarat("F1.DAT",fxs,fxis,FALSE);
-			CloseHandle(hMFile);
-			return;
-		}
-		//master var
-		else
-		{
-			ReadFile(hMFile, &masterheader, sizeof(masterheader), &dwBytesWritten, NULL);
-			ReadFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
-			// Check for eof.
-			while (dwBytesWritten != 0)
-			{
-				if (0 == strncmp(symbolname, master.secsymbol, lstrlen(symbolname)))
-				{
-					SetFilePointer(hMFile, -sizeof(MASTER), 0, FILE_CURRENT);
-					memmove(master.fdate, fxs.front().date, 4);
-					memmove(master.ldate, fxs.back().date, 4);
-					WriteFile(
-						hMFile,           // open file handle
-						&master,      // start of data to write
-						sizeof(master),  // number of bytes to write
-						&dwBytesWritten, // number of bytes that were written
-						NULL);
-					std::string a = "F" + std::to_string(master.fx) + ".DAT";
-					FxYarat(a.c_str(), fxs,fxis,FALSE);
-					CloseHandle(hMFile);
-					return;
-				}
-				ReadFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
-			}
-			if (masterheader.totalfx != 0xff) {
-					SetFilePointer(hMFile, 0, 0, FILE_BEGIN);
-					masterheader.totalfx = masterheader.lastaddedfx = masterheader.totalfx + 1;
-					WriteFile(
-						hMFile,           // open file handle
-						&masterheader,      // start of data to write
-						sizeof(masterheader),  // number of bytes to write
-						&dwBytesWritten, // number of bytes that were written
-						NULL);
-					SetFilePointer(hMFile, 0, 0, FILE_END);
-					master.fx = masterheader.totalfx;
-					memset(master.secname, 0x20, 16);
-					memmove(master.secname, symbolname, lstrlen(symbolname));
-					memset(master.secsymbol, 0x20, 16);
-					memmove(master.secsymbol, symbolname, lstrlen(symbolname));
-					memmove(master.fdate, fxs.front().date, 4);
-					memmove(master.ldate, fxs.back().date, 4);
-					WriteFile(
-						hMFile,           // open file handle
-						&master,      // start of data to write
-						sizeof(master),  // number of bytes to write
-						&dwBytesWritten, // number of bytes that were written
-						NULL);
-					std::string a= "F"+std::to_string(master.fx)+".DAT";
-					FxYarat(a.c_str(), fxs,fxis,FALSE);
-					CloseHandle(hMFile);
-					return;
-			}
-			CloseHandle(hMFile);
-
-
-				//xmastera bak
-				// xmaster aç
-				hXMFile = CreateFile("XMASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-				if (hXMFile == INVALID_HANDLE_VALUE)
-				{
-					//readonly olabilir
-					hXMFile = CreateFile("XMASTER", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-				}
-				//xmaster yok
-				if (hXMFile == INVALID_HANDLE_VALUE)
-				{
-
-					hXMFile = CreateFile("XMASTER",                // name of the write
-						GENERIC_READ | GENERIC_WRITE,          // open for writing
-						FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,                      // do not share
-						NULL,                   // default security
-						CREATE_NEW,             // create new file only
-						FILE_ATTRIBUTE_NORMAL,  // normal file
-						NULL);                  // no attr. template
-
-					
-					xmasterheader.comingasfx_mwd = 257;
-					xmasterheader._totalfx_mwd = 1;
-					xmasterheader.totalfx_mwd = 1;
-					
-					WriteFile(
-						hXMFile,           // open file handle
-						&xmasterheader,      // start of data to write
-						sizeof(xmasterheader),  // number of bytes to write
-						&dwBytesWritten, // number of bytes that were written
-						NULL);
-
-					
-					xmaster.fx= xmasterheader.comingasfx_mwd-1;
-					memset(master.secname, 0x20, 16);
-					memmove(xmaster.secname, symbolname, lstrlen(symbolname));
-					memset(master.secsymbol, 0x20, 16);
-					memmove(xmaster.secsymbol, symbolname, lstrlen(symbolname));
-					float f = BasicToIEEE((unsigned char*)fxs.front().date)+ 19000000.0f;
-					xmaster.fdate = f;
-					xmaster._fdate = f;
-					xmaster.notimportantfdate[0] = f;
-					f = BasicToIEEE((unsigned char*)fxs.back().date) + 19000000.0f;
-					xmaster.ldate =f;
-
-					
-					WriteFile(
-						hXMFile,           // open file handle
-						&xmaster,      // start of data to write
-						sizeof(xmaster),  // number of bytes to write
-						&dwBytesWritten, // number of bytes that were written
-						NULL);
-					FxYarat("F256.MWD", fxs,fxis,FALSE);
-					CloseHandle(hXMFile);
-					return;
-				}
-
-				
-
-				//xmaster ara
-				ReadFile(hXMFile, &xmasterheader, sizeof(xmasterheader), &dwBytesWritten, NULL);
-				ReadFile(hXMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
-				// Check for eof.
-				while (dwBytesWritten != 0)
-				{
-					if (0 == strncmp(symbolname, xmaster.secsymbol, lstrlen(symbolname)))
-					{
-						SetFilePointer(hMFile, -sizeof(xmaster), 0, FILE_CURRENT);
-						float f = BasicToIEEE((unsigned char*)fxs.front().date) + 19000000.0f;
-						xmaster.fdate = f;
-						xmaster._fdate = f;
-						xmaster.notimportantfdate[0] = f;
-						f = BasicToIEEE((unsigned char*)fxs.back().date) + 19000000.0f;
-						xmaster.ldate = f;
-						WriteFile(
-							hXMFile,           // open file handle
-							&xmaster,      // start of data to write
-							sizeof(xmaster),  // number of bytes to write
-							&dwBytesWritten, // number of bytes that were written
-							NULL);
-						std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
-						FxYarat(a.c_str(), fxs,fxis,FALSE);
-						CloseHandle(hXMFile);
-						return;
-					}
-					ReadFile(hMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
-				}
-
-				////yoksa xmastera ekle
-				
-				SetFilePointer(hXMFile, 0, 0, FILE_BEGIN);
-				xmasterheader._totalfx_mwd = xmasterheader.comingasfx_mwd-255;
-				xmasterheader.totalfx_mwd = xmasterheader.comingasfx_mwd-255;
-				xmasterheader.comingasfx_mwd = xmasterheader.comingasfx_mwd+1;
-				WriteFile(
-					hXMFile,           // open file handle
-					&xmasterheader,      // start of data to write
-					sizeof(xmasterheader),  // number of bytes to write
-					&dwBytesWritten, // number of bytes that were written
-					NULL);
-				SetFilePointer(hXMFile, 0, 0, FILE_END);
-
-				xmaster.fx = xmasterheader.comingasfx_mwd - 1;
-				memset(master.secname, 0x20, 16);
-				memmove(xmaster.secname, symbolname, lstrlen(symbolname));
-				memset(master.secsymbol, 0x20, 16);
-				memmove(xmaster.secsymbol, symbolname, lstrlen(symbolname));
-				float f = BasicToIEEE((unsigned char*)fxs.front().date) + 19000000.0f;
-				xmaster.fdate = f;
-				xmaster._fdate = f;
-				xmaster.notimportantfdate[0] = f;
-				f = BasicToIEEE((unsigned char*)fxs.back().date) + 19000000.0f;
-				xmaster.ldate = f;
-
-
-				WriteFile(
-					hXMFile,           // open file handle
-					&xmaster,      // start of data to write
-					sizeof(xmaster),  // number of bytes to write
-					&dwBytesWritten, // number of bytes that were written
-					NULL);
-				std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
-				FxYarat(a.c_str(), fxs,fxis,FALSE);
-				CloseHandle(hXMFile);
-				return;
-
-
-		}
-	}
-
-
-	void OpenReadWritei(char* symbolname, std::vector<FX> fxs,std::vector<FXI> fxis) {
-
-
-		// master aç
-		hMFile = CreateFile("MASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hMFile == INVALID_HANDLE_VALUE)
-		{
-		//readonly olabilir
-		hMFile = CreateFile("MASTER", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		}
-		//master yok
-		if (hMFile == INVALID_HANDLE_VALUE)
-		{
-			hMFile = CreateFile("MASTER",                // name of the write
-				GENERIC_READ | GENERIC_WRITE,          // open for writing
-				FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,                      // do not share
-				NULL,                   // default security
-				CREATE_NEW,             // create new file only
-				FILE_ATTRIBUTE_NORMAL,  // normal file
-				NULL);                  // no attr. template
-
-			masterheader.totalfx = masterheader.lastaddedfx = 1;
-			WriteFile(
-				hMFile,           // open file handle
-				&masterheader,      // start of data to write
-				sizeof(masterheader),  // number of bytes to write
-				&dwBytesWritten, // number of bytes that were written
-				NULL);
-
-			master.fieldssize = 28;
-			master.fieldsnumber = 7;
-			master.period[0] = 'I';
-			master.timeframe[0] = 1;
-
-			master.fx = 1;
-			memset(master.secname, 0x20, 16);
-			memmove(master.secname, symbolname, lstrlen(symbolname));
-			memset(master.secsymbol, 0x20, 16);
-			memmove(master.secsymbol, symbolname, lstrlen(symbolname));
-			memmove(master.fdate, fxis.front().date, 4);
-			memmove(master.ldate, fxis.back().date, 4);
-			WriteFile(
-				hMFile,           // open file handle
-				&master,      // start of data to write
-				sizeof(master),  // number of bytes to write
-				&dwBytesWritten, // number of bytes that were written
-				NULL);
-			FxYarat("F1.DAT", fxs,fxis,TRUE);
-			CloseHandle(hMFile);
-			return;
-		}
-		//master var
-		else
-		{
-			ReadFile(hMFile, &masterheader, sizeof(masterheader), &dwBytesWritten, NULL);
-			ReadFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
-			// Check for eof.
-			while (dwBytesWritten != 0)
-			{
-				if (0 == strncmp(symbolname, master.secsymbol, lstrlen(symbolname)))
-				{
-					SetFilePointer(hMFile, -sizeof(MASTER), 0, FILE_CURRENT);
-					memmove(master.fdate, fxis.front().date, 4);
-					memmove(master.ldate, fxis.back().date, 4);
-					WriteFile(
-						hMFile,           // open file handle
-						&master,      // start of data to write
-						sizeof(master),  // number of bytes to write
-						&dwBytesWritten, // number of bytes that were written
-						NULL);
-					std::string a = "F" + std::to_string(master.fx) + ".DAT";
-					FxYarat(a.c_str(),fxs, fxis,TRUE);
-					CloseHandle(hMFile);
-					return;
-				}
-				ReadFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
-			}
-			if (masterheader.totalfx != 0xff) {
-				SetFilePointer(hMFile, 0, 0, FILE_BEGIN);
-				masterheader.totalfx = masterheader.lastaddedfx = masterheader.totalfx + 1;
-				WriteFile(
-					hMFile,           // open file handle
-					&masterheader,      // start of data to write
-					sizeof(masterheader),  // number of bytes to write
-					&dwBytesWritten, // number of bytes that were written
-					NULL);
-				SetFilePointer(hMFile, 0, 0, FILE_END);
-				master.fx = masterheader.totalfx;
-				memset(master.secname, 0x20, 16);
-				memmove(master.secname, symbolname, lstrlen(symbolname));
-				memset(master.secsymbol, 0x20, 16);
-				memmove(master.secsymbol, symbolname, lstrlen(symbolname));
-				memmove(master.fdate, fxis.front().date, 4);
-				memmove(master.ldate, fxis.back().date, 4);
-				WriteFile(
-					hMFile,           // open file handle
-					&master,      // start of data to write
-					sizeof(master),  // number of bytes to write
-					&dwBytesWritten, // number of bytes that were written
-					NULL);
-				std::string a = "F" + std::to_string(master.fx) + ".DAT";
-				FxYarat(a.c_str(), fxs,fxis,TRUE);
-				CloseHandle(hMFile);
-				return;
-			}
-			CloseHandle(hMFile);
-
-
-			//xmastera bak
-			// xmaster aç
-			hXMFile = CreateFile("XMASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-			if (hXMFile == INVALID_HANDLE_VALUE)
-			{
-				//readonly olabilir
-				hXMFile = CreateFile("XMASTER", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-			}
-			//xmaster yok
-			if (hXMFile == INVALID_HANDLE_VALUE)
-			{
-
-				hXMFile = CreateFile("XMASTER",                // name of the write
-					GENERIC_READ | GENERIC_WRITE,          // open for writing
-					FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,                      // do not share
-					NULL,                   // default security
-					CREATE_NEW,             // create new file only
-					FILE_ATTRIBUTE_NORMAL,  // normal file
-					NULL);                  // no attr. template
-
-
-
-
-				xmasterheader.comingasfx_mwd = 257;
-				xmasterheader._totalfx_mwd = 1;
-				xmasterheader.totalfx_mwd = 1;
-
-				WriteFile(
-					hXMFile,           // open file handle
-					&xmasterheader,      // start of data to write
-					sizeof(xmasterheader),  // number of bytes to write
-					&dwBytesWritten, // number of bytes that were written
-					NULL);
-
-				xmaster.period = 'I';
-				xmaster.timeframe = 1;
-				xmaster._unknown = 0xbf000000;
-
-				xmaster.fx = xmasterheader.comingasfx_mwd - 1;
-				memset(master.secname, 0x20, 16);
-				memmove(xmaster.secname, symbolname, lstrlen(symbolname));
-				memset(master.secsymbol, 0x20, 16);
-				memmove(xmaster.secsymbol, symbolname, lstrlen(symbolname));
-				float f = BasicToIEEE((unsigned char*)fxis.front().date) + 19000000.0f;
-				xmaster.fdate = f;
-				xmaster._fdate = f;
-				xmaster.notimportantfdate[0] = f;
-				f = BasicToIEEE((unsigned char*)fxis.back().date) + 19000000.0f;
-				xmaster.ldate = f;
-
-
-				WriteFile(
-					hXMFile,           // open file handle
-					&xmaster,      // start of data to write
-					sizeof(xmaster),  // number of bytes to write
-					&dwBytesWritten, // number of bytes that were written
-					NULL);
-				FxYarat("F256.MWD", fxs,fxis,TRUE);
-				CloseHandle(hXMFile);
-				return;
-			}
-
-
-
-			//xmaster ara
-			ReadFile(hXMFile, &xmasterheader, sizeof(xmasterheader), &dwBytesWritten, NULL);
-			ReadFile(hXMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
-			// Check for eof.
-			while (dwBytesWritten != 0)
-			{
-				if (0 == strncmp(symbolname, xmaster.secsymbol, lstrlen(symbolname)))
-				{
-					SetFilePointer(hMFile, -sizeof(xmaster), 0, FILE_CURRENT);
-					float f = BasicToIEEE((unsigned char*)fxis.front().date) + 19000000.0f;
-					xmaster.fdate = f;
-					xmaster._fdate = f;
-					xmaster.notimportantfdate[0] = f;
-					f = BasicToIEEE((unsigned char*)fxis.back().date) + 19000000.0f;
-					xmaster.ldate = f;
-					WriteFile(
-						hXMFile,           // open file handle
-						&xmaster,      // start of data to write
-						sizeof(xmaster),  // number of bytes to write
-						&dwBytesWritten, // number of bytes that were written
-						NULL);
-					std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
-					FxYarat(a.c_str(), fxs,fxis,TRUE);
-					CloseHandle(hXMFile);
-					return;
-				}
-				ReadFile(hMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
-			}
-
-			////yoksa xmastera ekle
-
-			SetFilePointer(hXMFile, 0, 0, FILE_BEGIN);
-			xmasterheader._totalfx_mwd = xmasterheader.comingasfx_mwd - 255;
-			xmasterheader.totalfx_mwd = xmasterheader.comingasfx_mwd - 255;
-			xmasterheader.comingasfx_mwd = xmasterheader.comingasfx_mwd + 1;
-			WriteFile(
-				hXMFile,           // open file handle
-				&xmasterheader,      // start of data to write
-				sizeof(xmasterheader),  // number of bytes to write
-				&dwBytesWritten, // number of bytes that were written
-				NULL);
-			SetFilePointer(hXMFile, 0, 0, FILE_END);
-
-			xmaster.fx = xmasterheader.comingasfx_mwd - 1;
-			memset(master.secname, 0x20, 16);
-			memmove(xmaster.secname, symbolname, lstrlen(symbolname));
-			memset(master.secsymbol, 0x20, 16);
-			memmove(xmaster.secsymbol, symbolname, lstrlen(symbolname));
-			float f = BasicToIEEE((unsigned char*)fxis.front().date) + 19000000.0f;
-			xmaster.fdate = f;
-			xmaster._fdate = f;
-			xmaster.notimportantfdate[0] = f;
-			f = BasicToIEEE((unsigned char*)fxis.back().date) + 19000000.0f;
-			xmaster.ldate = f;
-
-
-			WriteFile(
-				hXMFile,           // open file handle
-				&xmaster,      // start of data to write
-				sizeof(xmaster),  // number of bytes to write
-				&dwBytesWritten, // number of bytes that were written
-				NULL);
-			std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
-			FxYarat(a.c_str(), fxs,fxis,TRUE);
-			CloseHandle(hXMFile);
-			return;
-
-
-		}
-	}
 public:
 
 	Metastock()
@@ -645,25 +170,226 @@ public:
 	}
 
 
-	void WriteSec(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis, const char* workingdir) {
-		char curdir[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, curdir);
-		SetCurrentDirectory(workingdir);
+	void WriteSecwithData(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis , bool bintraday) {
+		bool breadonly = FALSE;
 
-		OpenReadWrite(symbolname,fxs,fxis);
+		// master aç
+		hMFile = CreateFile("MASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (hMFile == INVALID_HANDLE_VALUE)
+		{
+			//readonly olabilir
+			hMFile = CreateFile("MASTER", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			if (hMFile != INVALID_HANDLE_VALUE)breadonly = TRUE;
+
+		}
+		//master yok
+		if (hMFile == INVALID_HANDLE_VALUE)
+		{
+			hMFile = CreateFile("MASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+
+			masterheader.totalfx = masterheader.lastaddedfx = 1;
+			WriteFile(hMFile, &masterheader, sizeof(masterheader), &dwBytesWritten, NULL);
+
+			if (bintraday == TRUE) {
+				master.fieldssize = 28;
+				master.fieldsnumber = 7;
+				master.period[0] = 'I';
+				master.timeframe[0] = 1;
+				memmove(master.fdate, fxis.front().date, 4);
+				memmove(master.ldate, fxis.back().date, 4);
+			}
+			else
+			{
+				memmove(master.fdate, fxs.front().date, 4);
+				memmove(master.ldate, fxs.back().date, 4);
+			}
+			master.fx = 1;
+			memmove(master.secname, symbolname, lstrlen(symbolname));
+			memmove(master.secsymbol, symbolname, lstrlen(symbolname));
+			WriteFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
+
+			FxYarat("F1.DAT", fxs, fxis, bintraday);
+			CloseHandle(hMFile);
+			return;
+		}
+		//master var
+		else
+		{
+			ReadFile(hMFile, &masterheader, sizeof(masterheader), &dwBytesWritten, NULL);
+			ReadFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
+			// Check for eof.
+			while (dwBytesWritten != 0)
+			{
+				if (0 == strncmp(symbolname, master.secsymbol, lstrlen(symbolname)))
+				{
+					SetFilePointer(hMFile, -sizeof(MASTER), 0, FILE_CURRENT);
+					if (bintraday == TRUE) {
+						memmove(master.fdate, fxis.front().date, 4);
+						memmove(master.ldate, fxis.back().date, 4);
+					}
+					else {
+						memmove(master.fdate, fxs.front().date, 4);
+						memmove(master.ldate, fxs.back().date, 4);
+					}
+					WriteFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
+
+					std::string a = "F" + std::to_string(master.fx) + ".DAT";
+					FxYarat(a.c_str(), fxs, fxis, bintraday);
+					CloseHandle(hMFile);
+					return;
+				}
+				ReadFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
+			}
+
+		}
+
+		if (masterheader.totalfx != 0xff) {
+			if (breadonly == TRUE)return;
+
+			SetFilePointer(hMFile, 0, 0, FILE_BEGIN);
+			masterheader.totalfx = masterheader.lastaddedfx = masterheader.totalfx + 1;
+			WriteFile(hMFile, &masterheader, sizeof(masterheader), &dwBytesWritten, NULL);
+
+			SetFilePointer(hMFile, 0, 0, FILE_END);
+			if (bintraday == TRUE) {
+				memmove(master.fdate, fxis.front().date, 4);
+				memmove(master.ldate, fxis.back().date, 4);
+			}
+			else
+			{
+				memmove(master.fdate, fxs.front().date, 4);
+				memmove(master.ldate, fxs.back().date, 4);
+			}
+			master.fx = masterheader.totalfx;
+			memmove(master.secname, symbolname, lstrlen(symbolname));
+			memmove(master.secsymbol, symbolname, lstrlen(symbolname));
+			WriteFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
+
+			std::string a = "F" + std::to_string(master.fx) + ".DAT";
+			FxYarat(a.c_str(), fxs, fxis, bintraday);
+			CloseHandle(hMFile);
+			return;
+		}
 
 
-		SetCurrentDirectory(curdir);
+		CloseHandle(hMFile);
+
+
+		//xmastera bak
+		// xmaster aç
+		hXMFile = CreateFile("XMASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		//xmaster yok
+		if (hXMFile == INVALID_HANDLE_VALUE)
+		{
+			hXMFile = CreateFile("XMASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+
+			xmasterheader.comingasfx_mwd = 257;
+			xmasterheader._totalfx_mwd = 1;
+			xmasterheader.totalfx_mwd = 1;
+			WriteFile(hXMFile, &xmasterheader, sizeof(xmasterheader), &dwBytesWritten, NULL);
+			
+			double f = 0.0,l = 0.0;
+			if (bintraday==TRUE)
+			{
+				xmaster.period = 'I';
+				xmaster.timeframe = 1;
+				xmaster._unknown = 0xbf000000;
+				f = BasicToIEEE((unsigned char*)fxis.front().date) + 19000000.0;
+				l = BasicToIEEE((unsigned char*)fxis.back().date) + 19000000.0;
+			}
+			else
+			{
+				f = BasicToIEEE((unsigned char*)fxs.front().date) + 19000000.0;
+				l = BasicToIEEE((unsigned char*)fxs.back().date) + 19000000.0;
+			}
+			xmaster.fx = xmasterheader.comingasfx_mwd - 1;
+			memmove(xmaster.secname, symbolname, lstrlen(symbolname));
+			memmove(xmaster.secsymbol, symbolname, lstrlen(symbolname));
+			xmaster.fdate = f;
+			xmaster._fdate = f;
+			xmaster.notimportantfdate[0] = f;
+			xmaster.ldate = l;
+			WriteFile(hXMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
+
+			FxYarat("F256.MWD", fxs, fxis, bintraday);
+			CloseHandle(hXMFile);
+			return;
+		}
+
+
+
+		//xmaster ara
+		ReadFile(hXMFile, &xmasterheader, sizeof(xmasterheader), &dwBytesWritten, NULL);
+		ReadFile(hXMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
+		// Check for eof.
+		while (dwBytesWritten != 0)
+		{
+			if (0 == strncmp(symbolname, xmaster.secsymbol, lstrlen(symbolname)))
+			{
+				double f = 0.0, l = 0.0;
+				SetFilePointer(hXMFile, -sizeof(xmaster), 0, FILE_CURRENT);
+				if (bintraday==true)
+				{
+					f = BasicToIEEE((unsigned char*)fxis.front().date) + 19000000.0;
+					l = BasicToIEEE((unsigned char*)fxis.back().date) + 19000000.0;
+				}
+				else
+				{
+					f = BasicToIEEE((unsigned char*)fxs.front().date) + 19000000.0;
+					l = BasicToIEEE((unsigned char*)fxs.back().date) + 19000000.0;
+				}
+				xmaster.fdate = f;
+				xmaster._fdate = f;
+				xmaster.notimportantfdate[0] = f;
+				xmaster.ldate = l;
+				WriteFile(hXMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
+
+				std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
+				FxYarat(a.c_str(), fxs, fxis, bintraday);
+				CloseHandle(hXMFile);
+				return;
+			}
+			ReadFile(hXMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
+		}
+
+		////yoksa xmastera ekle
+
+		SetFilePointer(hXMFile, 0, 0, FILE_BEGIN);
+		xmasterheader._totalfx_mwd = xmasterheader.comingasfx_mwd - 255;
+		xmasterheader.totalfx_mwd = xmasterheader.comingasfx_mwd - 255;
+		xmasterheader.comingasfx_mwd = xmasterheader.comingasfx_mwd + 1;
+		WriteFile(hXMFile, &xmasterheader, sizeof(xmasterheader), &dwBytesWritten, NULL);
+
+		SetFilePointer(hXMFile, 0, 0, FILE_END);
+		double f = 0.0, l = 0.0;
+		if (bintraday == TRUE)
+		{
+			xmaster.period = 'I';
+			xmaster.timeframe = 1;
+			xmaster._unknown = 0xbf000000;
+			f = BasicToIEEE((unsigned char*)fxis.front().date) + 19000000.0;
+			l = BasicToIEEE((unsigned char*)fxis.back().date) + 19000000.0;
+		}
+		else
+		{
+			f = BasicToIEEE((unsigned char*)fxs.front().date) + 19000000.0;
+			l = BasicToIEEE((unsigned char*)fxs.back().date) + 19000000.0;
+		}
+		xmaster.fx = xmasterheader.comingasfx_mwd - 1;
+		memmove(xmaster.secname, symbolname, lstrlen(symbolname));
+		memmove(xmaster.secsymbol, symbolname, lstrlen(symbolname));
+		xmaster.fdate = f;
+		xmaster._fdate = f;
+		xmaster.notimportantfdate[0] = f;
+		xmaster.ldate = l;
+		WriteFile(hXMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
+
+		std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
+		FxYarat(a.c_str(), fxs, fxis, bintraday);
+		CloseHandle(hXMFile);
+		return;
+
 	}
-	void WriteSeci(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis, const char* workingdir) {
-		char curdir[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, curdir);
-		SetCurrentDirectory(workingdir);
 
-		OpenReadWritei(symbolname, fxs,fxis);
-
-
-		SetCurrentDirectory(curdir);
-	}
 };
 

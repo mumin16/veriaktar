@@ -95,7 +95,10 @@ void mtaktar(_In_ HWND   hwndDlg) {
 		std::string fullpathnamewithfilenameandext = ofn.lpstrFile;
 		std::string filenameandext = fullpathnamewithfilenameandext.substr(fullpathnamewithfilenameandext.find_last_of("/\\") + 1);
 		std::string filename=remove_extension(filenameandext);
-		ms->WriteSeci((char*)filename.c_str(), fxs, fxis, dir.c_str());
+		
+		SetCurrentDirectory(dir.c_str());
+		ms->WriteSecwithData((char*)filename.c_str(), fxs, fxis,TRUE);
+		SetCurrentDirectory(curdir);
 		delete ms;
 
 		fxis.clear();

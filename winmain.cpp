@@ -17,7 +17,7 @@ char curdir[MAX_PATH];
 #include "mtaktar.h"
 #include "ayarlar.h"
 
-#define BUILDVERSION "20160325"
+#define BUILDVERSION "20160326"
 
 INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wParam,_In_ LPARAM lParam)
 {
