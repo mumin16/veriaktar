@@ -90,7 +90,8 @@ void mtaktar(_In_ HWND   hwndDlg) {
 	{
 		SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"Metatrader aktarimi basarisiz!");
 	}
-			
+	
+	if(fxis.size()>65500)fxis.erase(fxis.begin(), fxis.end()-65500);
 
 		std::string fullpathnamewithfilenameandext = ofn.lpstrFile;
 		std::string filenameandext = fullpathnamewithfilenameandext.substr(fullpathnamewithfilenameandext.find_last_of("/\\") + 1);

@@ -130,13 +130,6 @@ public:
 	}
 private:
 
-	HANDLE hMFile = 0, hXMFile = 0;
-	DWORD dwBytesWritten = 0;
-	MASTERHEADER masterheader;
-	MASTER master;
-	XMASTERHEADER xmasterheader;
-	XMASTER xmaster ;
-
 	void FxYarat(const char* filename, std::vector<FX> fxs, std::vector<FXI> fxis,bool bintraday) {
 		FXHEADER fxheader;
 		FXIHEADER fxiheader;
@@ -171,6 +164,12 @@ public:
 
 
 	void WriteSecwithData(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis , bool bintraday) {
+		HANDLE hMFile = 0, hXMFile = 0;
+		DWORD dwBytesWritten = 0;
+		MASTERHEADER masterheader;
+		MASTER master;
+		XMASTERHEADER xmasterheader;
+		XMASTER xmaster;
 		bool breadonly = FALSE;
 
 		// master aç

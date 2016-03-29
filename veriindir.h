@@ -143,6 +143,8 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 
 			}
 
+			if (fxis.size()>65500)fxis.erase(fxis.begin(), fxis.end() - 65500);
+
 			std::string dir = curdir;
 	
 				dir.append("\\1DAKIKA");
@@ -313,6 +315,8 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 			continue;
 
 		}
+
+		if (fxs.size()>65500)fxs.erase(fxs.begin(), fxs.end() - 65500);
 
 				std::string dir = curdir;
 				

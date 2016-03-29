@@ -17,7 +17,7 @@ char curdir[MAX_PATH];
 #include "mtaktar.h"
 #include "ayarlar.h"
 
-#define BUILDVERSION "20160326"
+#define BUILDVERSION "20160329"
 
 INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wParam,_In_ LPARAM lParam)
 {
@@ -75,6 +75,35 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance,_In_ HINSTANCE hPrevInstance,_In_ 
 	CreateDirectory("GUNLUK", 0);	
 	CreateDirectory("1DAKIKA", 0);
 	CreateDirectory("METATRADER", 0);
+	// ayarları aç
+	DWORD dwBytesWritten = 0;
+	HANDLE hAyarlar = CreateFile("ayarlar.txt", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hAyarlar == INVALID_HANDLE_VALUE)
+	{
+		hAyarlar = CreateFile("ayarlar.txt", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//guncellik kontrolu
+		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//sembolleri oto indir
+		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//bolunmeleri oto indir
+		WriteFile(hAyarlar, "21032016\n", 9, &dwBytesWritten, NULL);//gunluk veriler için ilk tarih
+		WriteFile(hAyarlar, "15\n", 3, &dwBytesWritten, NULL);//gun içi veriler şu günlük
+		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//gun içi veriler şu dakikalık
+		CloseHandle(hAyarlar);
+
+	}
+	else
+	{
+		CloseHandle(hAyarlar);
+		std::string sLine = "";
+		std::ifstream incsv;
+		incsv.open("ayarlar.txt");
+		getline(incsv, sLine);//guncellik kontrolu
+		getline(incsv, sLine);//sembolleri oto indir
+		getline(incsv, sLine);//bolunmeleri oto indir
+		getline(incsv, sLine);//gunluk veriler için ilk tarih
+		getline(incsv, sLine);//gun içi veriler şu günlük
+		getline(incsv, sLine);//gun içi veriler şu dakikalık
+		incsv.close();
+	}
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
 }
 
