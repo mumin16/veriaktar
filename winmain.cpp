@@ -17,7 +17,7 @@ char curdir[MAX_PATH];
 #include "mtaktar.h"
 #include "ayarlar.h"
 
-#define BUILDVERSION "20160329"
+#define BUILDVERSION "20160402"
 
 INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wParam,_In_ LPARAM lParam)
 {
@@ -74,6 +74,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance,_In_ HINSTANCE hPrevInstance,_In_ 
 	GetCurrentDirectory(MAX_PATH, curdir);
 	CreateDirectory("GUNLUK", 0);	
 	CreateDirectory("1DAKIKA", 0);
+
 	CreateDirectory("METATRADER", 0);
 	// ayarları aç
 	DWORD dwBytesWritten = 0;
@@ -84,7 +85,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance,_In_ HINSTANCE hPrevInstance,_In_ 
 		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//guncellik kontrolu
 		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//sembolleri oto indir
 		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//bolunmeleri oto indir
-		WriteFile(hAyarlar, "21032016\n", 9, &dwBytesWritten, NULL);//gunluk veriler için ilk tarih
+		WriteFile(hAyarlar, "21032011\n", 9, &dwBytesWritten, NULL);//gunluk veriler için ilk tarih
 		WriteFile(hAyarlar, "15\n", 3, &dwBytesWritten, NULL);//gun içi veriler şu günlük
 		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//gun içi veriler şu dakikalık
 		CloseHandle(hAyarlar);

@@ -203,7 +203,9 @@ public:
 				memmove(master.ldate, fxs.back().date, 4);
 			}
 			master.fx = 1;
+			memset(master.secname, 0x20, 16);
 			memmove(master.secname, symbolname, lstrlen(symbolname));
+			memset(master.secsymbol, 0x20, 16);
 			memmove(master.secsymbol, symbolname, lstrlen(symbolname));
 			WriteFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
 
@@ -219,7 +221,7 @@ public:
 			// Check for eof.
 			while (dwBytesWritten != 0)
 			{
-				if (0 == strncmp(symbolname, master.secsymbol, lstrlen(symbolname)))
+				if (0 == strncmp(symbolname, master.secsymbol, lstrlen(symbolname)) && master.secsymbol[lstrlen(symbolname)]==0x20)
 				{
 					SetFilePointer(hMFile, -sizeof(MASTER), 0, FILE_CURRENT);
 					if (bintraday == TRUE) {
@@ -260,7 +262,9 @@ public:
 				memmove(master.ldate, fxs.back().date, 4);
 			}
 			master.fx = masterheader.totalfx;
+			memset(master.secname, 0x20, 16);
 			memmove(master.secname, symbolname, lstrlen(symbolname));
+			memset(master.secsymbol, 0x20, 16);
 			memmove(master.secsymbol, symbolname, lstrlen(symbolname));
 			WriteFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
 
@@ -302,7 +306,9 @@ public:
 				l = BasicToIEEE((unsigned char*)fxs.back().date) + 19000000.0;
 			}
 			xmaster.fx = xmasterheader.comingasfx_mwd - 1;
+			memmove(xmaster.secname, "", 46);
 			memmove(xmaster.secname, symbolname, lstrlen(symbolname));
+			memmove(xmaster.secsymbol, "", 15);
 			memmove(xmaster.secsymbol, symbolname, lstrlen(symbolname));
 			xmaster.fdate = f;
 			xmaster._fdate = f;
@@ -323,7 +329,7 @@ public:
 		// Check for eof.
 		while (dwBytesWritten != 0)
 		{
-			if (0 == strncmp(symbolname, xmaster.secsymbol, lstrlen(symbolname)))
+			if (0 == strncmp(symbolname, xmaster.secsymbol, lstrlen(symbolname)) && xmaster.secsymbol[lstrlen(symbolname)] == 0x0)
 			{
 				double f = 0.0, l = 0.0;
 				SetFilePointer(hXMFile, -sizeof(xmaster), 0, FILE_CURRENT);
@@ -375,7 +381,9 @@ public:
 			l = BasicToIEEE((unsigned char*)fxs.back().date) + 19000000.0;
 		}
 		xmaster.fx = xmasterheader.comingasfx_mwd - 1;
+		memmove(xmaster.secname, "",46);
 		memmove(xmaster.secname, symbolname, lstrlen(symbolname));
+		memmove(xmaster.secsymbol, "", 15);
 		memmove(xmaster.secsymbol, symbolname, lstrlen(symbolname));
 		xmaster.fdate = f;
 		xmaster._fdate = f;
