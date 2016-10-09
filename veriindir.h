@@ -17,28 +17,30 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 	std::string sLine = "";
 	std::ifstream incsv;
 
-
+	char buffer3[255];
 	char buffer2[255];
 	int length2 = SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETCOUNT, 0, 0);
 
 	for (size_t i = 0; i < length2; i++)
 	{
-		//http://www.google.com/finance/getprices?&i=60&p=1d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
+		//http://www.google.com/finance/getprices?&i=60&p=50d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
-		sprintf(buffer, "http://www.google.com/finance/getprices?&i=60&p=15d&q=%s", buffer2);
+		GetDlgItemText(hwndDlg, IDC_XDAKIKA, buffer3, 256);
+		sprintf(buffer, "http://www.google.com/finance/getprices?&i=%i&p=50d&q=%s", atoi(buffer3)*60, buffer2);
 		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
 			//"Ok";
 			
 			ms = new Metastock;
 			incsv.open(buffer2);
-			getline(incsv, sLine);//ilk8 satýrý al
-			getline(incsv, sLine);//ilk8 satýrý al
-			getline(incsv, sLine);//ilk8 satýrý al
-			getline(incsv, sLine);//ilk8 satýrý al
-			getline(incsv, sLine);//ilk8 satýrý al
-			getline(incsv, sLine);//ilk8 satýrý al
-			getline(incsv, sLine);//ilk8 satýrý al
-			getline(incsv, sLine);//ilk8 satýrý al
+			do
+			{
+				getline(incsv, sLine);//ilk8 satýrý al
+				if (incsv.eof())break;
+			} while (0 != strncmp(sLine.c_str(), "TIMEZONE", 8) );
+			
+		
+	
+		
 			if (incsv.eof()) {
 				std::string a = buffer2;
 				a.append(" yuklenemedi...");
@@ -100,7 +102,7 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 				
 				}
 				else {
-					time_t timeNow = atol(unformatteddate)+60* atoi(sdate);
+					time_t timeNow = atol(unformatteddate)+ (atoi(buffer3) * 60) * atoi(sdate);
 					time_info = localtime(&timeNow);
 
 					idate = std::to_string(time_info->tm_year);
@@ -146,20 +148,31 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 			if (fxis.size()>65500)fxis.erase(fxis.begin(), fxis.end() - 65500);
 
 			std::string dir = curdir;
-	
-				dir.append("\\1DAKIKA");
+			dir.append("\\");
+			dir.append(buffer3);
+			
+				dir.append("DAKIKA");
 			
 			SetCurrentDirectory(dir.c_str());
-			ms->WriteSecwithData(buffer2, fxs,fxis,TRUE);
+			if (FALSE==ms->WriteSecwithData(buffer2, fxs, fxis, TRUE,atoi(buffer3))) {
+				std::string a = buffer2;
+				a.append(" yeni bir sembol ve Metastock daki pencereler acik oldugu icin, aktarilamadi! pencereleri kapa");
+				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+			}
+			else
+			{
+
+				std::string a = buffer2;
+				a.append(" yuklendi, aktarildi...");
+				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+			}
 			SetCurrentDirectory(curdir);
 			delete ms;
 
 			fxis.clear();
 			incsv.close();
 			DeleteFile(buffer2);
-			std::string a = buffer2;
-			a.append(" yuklendi, aktarildi...");
-			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+
 
 		}
 		else {
@@ -218,7 +231,11 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 	{
 		//http://www.google.com/finance/getprices?&i=60&p=1d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
-		sprintf(buffer, "http://www.google.com/finance/historical?output=csv&startdate=Mar+21%,+2011&enddate=&q=%s", buffer2);
+		time_t theTime = time(NULL);
+		struct tm *aTime = localtime(&theTime);
+		int year = aTime->tm_year + 1900-5; // Year is # years since 1900 - 5yil onceden 1 ocakdan
+
+		sprintf(buffer, "http://www.google.com/finance/historical?output=csv&startdate=Jan+01%,+%i&enddate=&q=%s",year, buffer2);
 		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
 			//"Ok";
 
@@ -324,16 +341,26 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 			
 					SetCurrentDirectory(dir.c_str());
 				
-				ms->WriteSecwithData(buffer2, fxs,fxis,FALSE );
+				
+				if (FALSE == ms->WriteSecwithData(buffer2, fxs, fxis, FALSE,0)) {
+					std::string a = buffer2;
+					a.append(" yeni bir sembol ve Metastock daki pencereler acik oldugu icin, aktarilamadi! pencereleri kapa");
+					SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+				}
+				else
+				{
+
+					std::string a = buffer2;
+					a.append(" yuklendi, aktarildi...");
+					SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+				}
 				SetCurrentDirectory(curdir);
 				delete ms;
 
 			fxs.clear();
 			incsv.close();
 			DeleteFile(buffer2);
-			std::string a = buffer2;
-			a.append(" yuklendi, aktarildi...");
-			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+	
 			
 		}
 		else {

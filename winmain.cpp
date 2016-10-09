@@ -10,34 +10,40 @@
 
 char curdir[MAX_PATH];
 
-#include "bolunmeler.h"
+
 #include "Metastock.h"
 #include "veriindir.h"
 #include "semboller.h"
 #include "mtaktar.h"
-#include "ayarlar.h"
 
-#define BUILDVERSION "20160402"
+
+
+const int BUILDVERSION = 20161009;
 
 INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wParam,_In_ LPARAM lParam)
 {
 	switch (uMsg) {
 		case WM_INITDIALOG:
 		{
+			SendDlgItemMessage(hwndDlg, IDC_XDAKIKA, CB_ADDSTRING, 0, (LPARAM)"1");
+			SendDlgItemMessage(hwndDlg, IDC_XDAKIKA, CB_ADDSTRING, 0, (LPARAM)"5");
+			SendDlgItemMessage(hwndDlg, IDC_XDAKIKA, CB_ADDSTRING, 0, (LPARAM)"15");
+			SendDlgItemMessage(hwndDlg, IDC_XDAKIKA, CB_ADDSTRING, 0, (LPARAM)"30");
+			SendDlgItemMessage(hwndDlg, IDC_XDAKIKA, CB_ADDSTRING, 0, (LPARAM)"60");
+			SendDlgItemMessage(hwndDlg, IDC_XDAKIKA, CB_SETCURSEL, 0, 0);
+			PostMessage(GetDlgItem(hwndDlg, IDC_1DAKIKA), BM_SETCHECK, BST_CHECKED, 0);
+			CloseHandle(CreateThread(NULL, NULL, ThreadProcSemboller, hwndDlg, 0, 0));
+			
 			if (S_OK == URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/versiyon.txt", "versiyon.txt", 0, NULL)) {
 				std::string sLine = "";
 				std::ifstream infile;
 				infile.open("versiyon.txt");
 				getline(infile, sLine);
-				if(lstrcmp(sLine.c_str(),BUILDVERSION)>0)MessageBox(hwndDlg,"Yeni Guncelleme var!","Bilgi",MB_OK);
+				if (atoi(sLine.c_str())<BUILDVERSION)MessageBox(hwndDlg, "Yeni Guncelleme var!", "Bilgi", MB_OK);
 			}
 			else {
-				MessageBox(hwndDlg, "Versiyon Kontrolu Yapılamadı\n Son Sürümü kullandığınıza emin olun\n internet bağlantısını kontrol edin", 0, MB_OK);
+				MessageBox(hwndDlg, "Versiyon Kontrolu Yapilamadi\n Son Surumu kullandiginiza emin olun\n internet baglantisini kontrol edin", 0, MB_OK);
 			}
-
-			CloseHandle(CreateThread(NULL, NULL, ThreadProcSemboller, hwndDlg, 0, 0));
-			CloseHandle(CreateThread(NULL, NULL, ThreadProcBolunmeler, hwndDlg, 0, 0));
-			PostMessage(GetDlgItem(hwndDlg, IDC_GUNLUK), BM_SETCHECK, BST_CHECKED, 0);
 			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_ADDSTRING, 0, (LPARAM)"Programin son surumunun kullanildigina emin olun!");
 		break;
 		}
@@ -47,10 +53,9 @@ INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wPa
 				CloseHandle(CreateThread(NULL, NULL, ThreadProc, hwndDlg, 0, 0));
 			}
 			else if (LOWORD(wParam) == IDR_HAKKINDA)MessageBox(hwndDlg, "Mumin GULER\nmumin16@hotmail.com\nhttps://github.com/mumin16/veriaktar/\nhttp://veriaktar.blogspot.com.tr/", "Hakkinda", MB_OK);
-			else if (LOWORD(wParam) == IDR_METATRADERAKTAR)mtaktar(hwndDlg);
 			else if (LOWORD(wParam) == IDR_PORTFOYYUKLE)PortfoyYukle(hwndDlg);
 			else if (LOWORD(wParam) == IDR_PORTFOYKAYDET)PortfoyKaydet(hwndDlg);
-			else if (LOWORD(wParam) == IDR_AYARLAR)Ayarlar(hwndDlg);
+			else if (LOWORD(wParam) == IDR_MT4)mtaktar(hwndDlg);
 			else if (LOWORD(wParam) == IDC_EKLE)Ekle(hwndDlg);
 			else if (LOWORD(wParam) == IDC_HEPSINIEKLE)HepsiniEkle(hwndDlg);
 			else if (LOWORD(wParam) == IDC_CIKAR)Cikar(hwndDlg);
@@ -74,37 +79,12 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance,_In_ HINSTANCE hPrevInstance,_In_ 
 	GetCurrentDirectory(MAX_PATH, curdir);
 	CreateDirectory("GUNLUK", 0);	
 	CreateDirectory("1DAKIKA", 0);
-
+	CreateDirectory("5DAKIKA", 0);
+	CreateDirectory("15DAKIKA", 0);
+	CreateDirectory("30DAKIKA", 0);
+	CreateDirectory("60DAKIKA", 0);
 	CreateDirectory("METATRADER", 0);
-	// ayarları aç
-	DWORD dwBytesWritten = 0;
-	HANDLE hAyarlar = CreateFile("ayarlar.txt", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hAyarlar == INVALID_HANDLE_VALUE)
-	{
-		hAyarlar = CreateFile("ayarlar.txt", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
-		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//guncellik kontrolu
-		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//sembolleri oto indir
-		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//bolunmeleri oto indir
-		WriteFile(hAyarlar, "21032011\n", 9, &dwBytesWritten, NULL);//gunluk veriler için ilk tarih
-		WriteFile(hAyarlar, "15\n", 3, &dwBytesWritten, NULL);//gun içi veriler şu günlük
-		WriteFile(hAyarlar, "1\n", 2, &dwBytesWritten, NULL);//gun içi veriler şu dakikalık
-		CloseHandle(hAyarlar);
 
-	}
-	else
-	{
-		CloseHandle(hAyarlar);
-		std::string sLine = "";
-		std::ifstream incsv;
-		incsv.open("ayarlar.txt");
-		getline(incsv, sLine);//guncellik kontrolu
-		getline(incsv, sLine);//sembolleri oto indir
-		getline(incsv, sLine);//bolunmeleri oto indir
-		getline(incsv, sLine);//gunluk veriler için ilk tarih
-		getline(incsv, sLine);//gun içi veriler şu günlük
-		getline(incsv, sLine);//gun içi veriler şu dakikalık
-		incsv.close();
-	}
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DialogProc, NULL);
 }
 

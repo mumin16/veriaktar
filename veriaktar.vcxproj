@@ -34,7 +34,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>LLVM-vs2014_xp</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <WholeProgramOptimization>
     </WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
@@ -160,10 +160,7 @@
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ayarlar.h" />
-    <ClInclude Include="bolunmeler.h" />
     <ClInclude Include="Metastock.h" />
-    <ClInclude Include="mtaktar.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="semboller.h" />
     <ClInclude Include="veriindir.h" />

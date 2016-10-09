@@ -1,4 +1,7 @@
 #pragma once
+#include  <io.h>
+#include  <stdio.h>
+#include  <stdlib.h>
 struct MASTERHEADER {
 	unsigned __int8 totalfx = 0;//max 0xff
 	const char padding = 0;
@@ -163,26 +166,18 @@ public:
 	}
 
 
-	void WriteSecwithData(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis , bool bintraday) {
+	bool WriteSecwithData(char* symbolname, std::vector<FX> fxs, std::vector<FXI> fxis , bool bintraday,int timeframe) {
 		HANDLE hMFile = 0, hXMFile = 0;
 		DWORD dwBytesWritten = 0;
 		MASTERHEADER masterheader;
 		MASTER master;
 		XMASTERHEADER xmasterheader;
 		XMASTER xmaster;
-		bool breadonly = FALSE;
+		
 
-		// master aç
-		hMFile = CreateFile("MASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hMFile == INVALID_HANDLE_VALUE)
-		{
-			//readonly olabilir
-			hMFile = CreateFile("MASTER", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-			if (hMFile != INVALID_HANDLE_VALUE)breadonly = TRUE;
 
-		}
-		//master yok
-		if (hMFile == INVALID_HANDLE_VALUE)
+		
+		if(_access("MASTER", 00) != 0)//Existence only- master yok
 		{
 			hMFile = CreateFile("MASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -193,7 +188,7 @@ public:
 				master.fieldssize = 28;
 				master.fieldsnumber = 7;
 				master.period[0] = 'I';
-				master.timeframe[0] = 1;
+				master.timeframe[0] = timeframe;
 				memmove(master.fdate, fxis.front().date, 4);
 				memmove(master.ldate, fxis.back().date, 4);
 			}
@@ -211,41 +206,53 @@ public:
 
 			FxYarat("F1.DAT", fxs, fxis, bintraday);
 			CloseHandle(hMFile);
-			return;
+			return TRUE;
 		}
-		//master var
+
+		if (_access("MASTER", 06) != 0)//read-wirte- Read-only
+		{
+			hMFile = CreateFile("MASTER", GENERIC_READ , FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			
+		}
 		else
 		{
+
+		
+			hMFile = CreateFile("MASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		}
+		
+
 			ReadFile(hMFile, &masterheader, sizeof(masterheader), &dwBytesWritten, NULL);
 			ReadFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
-			// Check for eof.
+			// Check for eof. sembolu ara
 			while (dwBytesWritten != 0)
 			{
 				if (0 == strncmp(symbolname, master.secsymbol, lstrlen(symbolname)) && master.secsymbol[lstrlen(symbolname)]==0x20)
 				{
-					SetFilePointer(hMFile, -sizeof(MASTER), 0, FILE_CURRENT);
-					if (bintraday == TRUE) {
-						memmove(master.fdate, fxis.front().date, 4);
-						memmove(master.ldate, fxis.back().date, 4);
-					}
-					else {
-						memmove(master.fdate, fxs.front().date, 4);
-						memmove(master.ldate, fxs.back().date, 4);
-					}
-					WriteFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
+						SetFilePointer(hMFile, -sizeof(MASTER), 0, FILE_CURRENT);
+						if (bintraday == TRUE) {
+							memmove(master.fdate, fxis.front().date, 4);
+							memmove(master.ldate, fxis.back().date, 4);
+						}
+						else {
+							memmove(master.fdate, fxs.front().date, 4);
+							memmove(master.ldate, fxs.back().date, 4);
+						}
+						WriteFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
 
 					std::string a = "F" + std::to_string(master.fx) + ".DAT";
 					FxYarat(a.c_str(), fxs, fxis, bintraday);
 					CloseHandle(hMFile);
-					return;
+					return TRUE;
 				}
 				ReadFile(hMFile, &master, sizeof(master), &dwBytesWritten, NULL);
 			}
 
-		}
+		
+			//masterda sembol yok, yer musait yazilabilirde
+		if ((masterheader.totalfx != 0xff) && (_access("MASTER", 06) == 0)) {
+			
 
-		if (masterheader.totalfx != 0xff) {
-			if (breadonly == TRUE)return;
 
 			SetFilePointer(hMFile, 0, 0, FILE_BEGIN);
 			masterheader.totalfx = masterheader.lastaddedfx = masterheader.totalfx + 1;
@@ -271,18 +278,18 @@ public:
 			std::string a = "F" + std::to_string(master.fx) + ".DAT";
 			FxYarat(a.c_str(), fxs, fxis, bintraday);
 			CloseHandle(hMFile);
-			return;
+			return TRUE;
+		}
+		else
+		{
+			CloseHandle(hMFile);
+			if (_access("MASTER", 06) != 0)return FALSE;
+			
 		}
 
+		
 
-		CloseHandle(hMFile);
-
-
-		//xmastera bak
-		// xmaster aç
-		hXMFile = CreateFile("XMASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		//xmaster yok
-		if (hXMFile == INVALID_HANDLE_VALUE)
+		if (_access("XMASTER", 00) != 0)//Existence only- xmaster yok
 		{
 			hXMFile = CreateFile("XMASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -290,12 +297,12 @@ public:
 			xmasterheader._totalfx_mwd = 1;
 			xmasterheader.totalfx_mwd = 1;
 			WriteFile(hXMFile, &xmasterheader, sizeof(xmasterheader), &dwBytesWritten, NULL);
-			
-			double f = 0.0,l = 0.0;
-			if (bintraday==TRUE)
+
+			double f = 0.0, l = 0.0;
+			if (bintraday == TRUE)
 			{
 				xmaster.period = 'I';
-				xmaster.timeframe = 1;
+				xmaster.timeframe = timeframe;
 				xmaster._unknown = 0xbf000000;
 				f = BasicToIEEE((unsigned char*)fxis.front().date) + 19000000.0;
 				l = BasicToIEEE((unsigned char*)fxis.back().date) + 19000000.0;
@@ -318,11 +325,13 @@ public:
 
 			FxYarat("F256.MWD", fxs, fxis, bintraday);
 			CloseHandle(hXMFile);
-			return;
+			return TRUE;
 		}
-
-
-
+		else// xmaster  var aç
+		{
+			hXMFile = CreateFile("XMASTER", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		}
+		
 		//xmaster ara
 		ReadFile(hXMFile, &xmasterheader, sizeof(xmasterheader), &dwBytesWritten, NULL);
 		ReadFile(hXMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
@@ -352,7 +361,7 @@ public:
 				std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
 				FxYarat(a.c_str(), fxs, fxis, bintraday);
 				CloseHandle(hXMFile);
-				return;
+				return TRUE;
 			}
 			ReadFile(hXMFile, &xmaster, sizeof(xmaster), &dwBytesWritten, NULL);
 		}
@@ -370,7 +379,7 @@ public:
 		if (bintraday == TRUE)
 		{
 			xmaster.period = 'I';
-			xmaster.timeframe = 1;
+			xmaster.timeframe = timeframe;
 			xmaster._unknown = 0xbf000000;
 			f = BasicToIEEE((unsigned char*)fxis.front().date) + 19000000.0;
 			l = BasicToIEEE((unsigned char*)fxis.back().date) + 19000000.0;
@@ -394,7 +403,7 @@ public:
 		std::string a = "F" + std::to_string(xmaster.fx) + ".MWD";
 		FxYarat(a.c_str(), fxs, fxis, bintraday);
 		CloseHandle(hXMFile);
-		return;
+		return TRUE;
 
 	}
 

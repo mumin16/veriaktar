@@ -21,19 +21,10 @@
     <ClInclude Include="veriindir.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="bolunmeler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="semboller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Metastock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ayarlar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mtaktar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

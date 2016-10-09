@@ -10,11 +10,13 @@ std::vector <SEMBOLLER> sembollers;
 void Semboller(_In_ HWND   hwndDlg) {
 	std::string sLine = "";
 	std::ifstream incsv;
-
+	/*
 	if (S_OK != URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/SEMBOLLER.txt", "SEMBOLLER.txt", 0, NULL)) {
 		SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_ADDSTRING, 0, (LPARAM)"Sembol listesi indirilemedi!");
 	}
+	*/
 	incsv.open("SEMBOLLER.txt");
+	if (!incsv)return;
 	getline(incsv, sLine);
 	while (!incsv.eof())
 	{
@@ -81,6 +83,7 @@ void PortfoyYukle(_In_ HWND   hwndDlg) {
 	if (0 == GetOpenFileName(&ofn))return;
 
 
+	SendDlgItemMessage(hwndDlg, IDC_SYMBOL1, LB_RESETCONTENT, 0, 0);
 	SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_RESETCONTENT, 0, 0);
 
 
@@ -91,7 +94,11 @@ void PortfoyYukle(_In_ HWND   hwndDlg) {
 	{
 		getline(ptxt, sLine);
 
-		if (0 != sLine.length())SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_ADDSTRING, 0, (LPARAM)sLine.c_str());
+		if (0 != sLine.length()) {
+			SendDlgItemMessage(hwndDlg, IDC_SYMBOL1, LB_ADDSTRING, 0, (LPARAM)sLine.c_str());
+			SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_ADDSTRING, 0, (LPARAM)sLine.c_str());
+		}
+			
 
 	}
 	ptxt.close();

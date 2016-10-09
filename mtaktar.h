@@ -98,7 +98,7 @@ void mtaktar(_In_ HWND   hwndDlg) {
 		std::string filename=remove_extension(filenameandext);
 		
 		SetCurrentDirectory(dir.c_str());
-		ms->WriteSecwithData((char*)filename.c_str(), fxs, fxis,TRUE);
+		ms->WriteSecwithData((char*)filename.c_str(), fxs, fxis,TRUE,1);
 		SetCurrentDirectory(curdir);
 		delete ms;
 
