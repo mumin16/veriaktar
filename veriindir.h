@@ -11,7 +11,182 @@ char unformatteddate[12];
 std::string idate = "";
 std::string itime = "";
 struct tm* time_info;
+void GunlukDakikagibiindir(_In_ HWND   hwndDlg, char* symbol) {
+	char buffer[250];
+	std::string sLine = "";
+	std::ifstream incsv;
 
+
+
+	
+
+		sprintf(buffer, "http://www.google.com/finance/getprices?&i=86400&p=500d&q=%s", symbol);
+		if (S_OK == URLDownloadToFile(NULL, buffer, symbol, 0, NULL)) {
+			//"Ok";
+
+			ms = new Metastock;
+			incsv.open(symbol);
+			do
+			{
+				getline(incsv, sLine);//ilk8 satýrý al
+				if (incsv.eof())break;
+			} while (0 != strncmp(sLine.c_str(), "TIMEZONE", 8));
+
+
+
+
+			if (incsv.eof()) {
+				std::string a = symbol;
+				a.append(" yuklenemedi...");
+				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+				yuklenemeyenler.push_back(symbol);
+				incsv.close();
+				DeleteFile(symbol);
+				return;
+			}
+			while (!incsv.eof())
+			{
+
+				getline(incsv, sLine);
+				if (incsv.eof())break;
+				char sdate[255], sclose[255], shigh[255], slow[255], sopen[255], svolume[255];
+				sscanf(sLine.c_str(), "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", sdate, sclose, shigh, slow, sopen, svolume);
+
+				unsigned char ret[255];
+				float f = atof(sopen);
+				if (f == 0)f = atof(sclose);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.open, (LPCSTR)ret, 4);
+
+				f = atof(shigh);
+				if (f == 0)f = atof(sclose);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.high, (LPCSTR)ret, 4);
+
+				f = atof(slow);
+				if (f == 0)f = atof(sclose);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.low, (LPCSTR)ret, 4);
+
+				f = atof(sclose);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.close, (LPCSTR)ret, 4);
+
+				f = atof(svolume);
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.volume, (LPCSTR)ret, 4);
+
+
+				if (0 == strncmp(sdate, "a", 1))
+				{
+					strcpy(sdate, sdate + 1);
+					strcpy(unformatteddate, sdate);
+
+					time_t timeNow = atol(sdate);
+					time_info = localtime(&timeNow);
+
+					idate = std::to_string(time_info->tm_year);
+					if (time_info->tm_mon + 1 <10)idate.append("0");
+					idate.append(std::to_string(time_info->tm_mon + 1));
+					if (time_info->tm_mday <10)idate.append("0");
+					idate.append(std::to_string(time_info->tm_mday));
+
+					itime = std::to_string(time_info->tm_hour);
+					if (time_info->tm_min <10)itime.append("0");
+					itime.append(std::to_string(time_info->tm_min));
+					itime.append("00");
+
+
+				}
+				else {
+					time_t timeNow = atol(unformatteddate) + 86400 * atoi(sdate);
+					time_info = localtime(&timeNow);
+
+					idate = std::to_string(time_info->tm_year);
+					if (time_info->tm_mon + 1 <10)idate.append("0");
+					idate.append(std::to_string(time_info->tm_mon + 1));
+					if (time_info->tm_mday <10)idate.append("0");
+					idate.append(std::to_string(time_info->tm_mday));
+
+					itime = std::to_string(time_info->tm_hour);
+					if (time_info->tm_min <10)itime.append("0");
+					itime.append(std::to_string(time_info->tm_min));
+					itime.append("00");
+				}
+
+				f = atof(idate.c_str());
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.date, (LPCSTR)ret, 4);
+
+				/*
+				f = atof(itime.c_str());
+				ms->IEEEToBasic(&f, ret);
+				memmove(fxi.time, (LPCSTR)ret, 4);
+				*/
+
+				fxs.push_back(fx);
+
+
+			}
+
+			if (fxs.size() == 0) {
+				std::string a = symbol;
+				a.append(" yuklenemedi...");
+				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+				yuklenemeyenler.push_back(symbol);
+				delete ms;
+
+				fxs.clear();
+				incsv.close();
+				DeleteFile(symbol);
+				return;
+
+			}
+
+			if (fxs.size()>65500)fxs.erase(fxs.begin(), fxs.end() - 65500);
+
+			std::string dir = curdir;
+			dir.append("\\GUNLUK");
+			
+
+			SetCurrentDirectory(dir.c_str());
+			if (FALSE == ms->WriteSecwithData(symbol, fxs, fxis, FALSE, 0)) {
+				std::string a = symbol;
+				a.append(" yeni bir sembol ve Metastock daki pencereler acik oldugu icin, aktarilamadi! pencereleri kapa");
+				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+			}
+			else
+			{
+
+				std::string a = symbol;
+				a.append(" yuklendi, aktarildi...");
+				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+			}
+			SetCurrentDirectory(curdir);
+			delete ms;
+
+			fxs.clear();
+			incsv.close();
+			DeleteFile(symbol);
+
+
+		}
+		else {
+			std::string a = symbol;
+			a.append(" yuklenemedi...");
+			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
+			yuklenemeyenler.push_back(symbol);
+			return;
+
+		}
+
+
+
+	
+
+
+	
+}
 void Dakikalikindir(_In_ HWND   hwndDlg) {
 	char buffer[250];
 	std::string sLine = "";
@@ -60,14 +235,17 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 
 				unsigned char ret[255];
 				float f = atof(sopen);
+				if(f==0)f= atof(sclose);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fxi.open, (LPCSTR)ret, 4);
 
 				f = atof(shigh);
+				if (f == 0)f = atof(sclose);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fxi.high, (LPCSTR)ret, 4);
 
 				f = atof(slow);
+				if (f == 0)f = atof(sclose);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fxi.low, (LPCSTR)ret, 4);
 
@@ -223,6 +401,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 	std::string sLine = "";
 	std::ifstream incsv;
 
+	
 
 	char buffer2[255];
 	int length2 = SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETCOUNT, 0, 0);
@@ -276,7 +455,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.date, (LPCSTR)ret, 4);
 
-				float ratio=1.0;
+				
 				//for (std::vector<int>::size_type i = 0; i != bolunmes.size(); i++) 
 				//{
 				//	/* std::cout << someVector[i]; ... */
@@ -291,23 +470,26 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 				//	}
 				//}
 				
-				f = atof(sopen)*ratio;
+				f = atof(sopen);
+				if (f == 0)f = atof(sclose);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.open, (LPCSTR)ret, 4);
 
-				f = atof(shigh)*ratio;
+				f = atof(shigh);
+				if (f == 0)f = atof(sclose);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.high, (LPCSTR)ret, 4);
 
-				f = atof(slow)*ratio;
+				f = atof(slow);
+				if (f == 0)f = atof(sclose);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.low, (LPCSTR)ret, 4);
 
-				f = atof(sclose)*ratio;
+				f = atof(sclose);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.close, (LPCSTR)ret, 4);
 
-				f = atof(svol)*ratio;
+				f = atof(svol);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.volume, (LPCSTR)ret, 4);
 
@@ -364,11 +546,11 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 			
 		}
 		else {
-			std::string a = buffer2;
-			a.append(" yuklenemedi...");
-			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
-			yuklenemeyenler.push_back(buffer2);
+			
+			GunlukDakikagibiindir(hwndDlg, buffer2);
 			continue;
+
+			
 
 		}
 
