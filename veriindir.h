@@ -201,7 +201,9 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 		//http://www.google.com/finance/getprices?&i=60&p=50d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
 		GetDlgItemText(hwndDlg, IDC_XDAKIKA, buffer3, 256);
-		sprintf(buffer, "http://www.google.com/finance/getprices?&i=%i&p=50d&q=%s", atoi(buffer3)*60, buffer2);
+		
+		sprintf(buffer, "http://finance.google.com/finance/getprices?&i=%i&p=%sd&q=%s", atoi(buffer3) * 60,"50", buffer2);
+
 		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
 			//"Ok";
 			

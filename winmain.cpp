@@ -18,7 +18,7 @@ char curdir[MAX_PATH];
 
 
 
-const int BUILDVERSION = 20161009;
+const int BUILDVERSION = 20170923;
 
 INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wParam,_In_ LPARAM lParam)
 {
@@ -32,6 +32,8 @@ INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wPa
 			SendDlgItemMessage(hwndDlg, IDC_XDAKIKA, CB_ADDSTRING, 0, (LPARAM)"60");
 			SendDlgItemMessage(hwndDlg, IDC_XDAKIKA, CB_SETCURSEL, 0, 0);
 			PostMessage(GetDlgItem(hwndDlg, IDC_1DAKIKA), BM_SETCHECK, BST_CHECKED, 0);
+
+			URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/SEMBOLLER.txt", "SEMBOLLER.txt", 0, NULL);
 			CloseHandle(CreateThread(NULL, NULL, ThreadProcSemboller, hwndDlg, 0, 0));
 			
 			if (S_OK == URLDownloadToFile(NULL, "https://raw.githubusercontent.com/mumin16/veriaktar/master/versiyon.txt", "versiyon.txt", 0, NULL)) {
