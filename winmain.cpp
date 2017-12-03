@@ -18,7 +18,7 @@ char curdir[MAX_PATH];
 
 
 
-const int BUILDVERSION = 20170923;
+const int BUILDVERSION = 20171203;
 
 INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wParam,_In_ LPARAM lParam)
 {
@@ -41,7 +41,7 @@ INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wPa
 				std::ifstream infile;
 				infile.open("versiyon.txt");
 				getline(infile, sLine);
-				if (atoi(sLine.c_str())<BUILDVERSION)MessageBox(hwndDlg, "Yeni Guncelleme var!", "Bilgi", MB_OK);
+				if (atoi(sLine.c_str())!=BUILDVERSION)MessageBox(hwndDlg, "Yeni Guncelleme var!", "Bilgi", MB_OK);
 			}
 			else {
 				MessageBox(hwndDlg, "Versiyon Kontrolu Yapilamadi\n Son Surumu kullandiginiza emin olun\n internet baglantisini kontrol edin", 0, MB_OK);

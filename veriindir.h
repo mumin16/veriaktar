@@ -410,13 +410,14 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 	for (size_t i = 0; i < length2; i++)
 	{
+		//http://finance.google.com/finance/historical?output=csv&startdate=Jan+01%,+%i&enddate=&q=%s
 		//http://www.google.com/finance/getprices?&i=60&p=1d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
 		time_t theTime = time(NULL);
 		struct tm *aTime = localtime(&theTime);
 		int year = aTime->tm_year + 1900-5; // Year is # years since 1900 - 5yil onceden 1 ocakdan
 
-		sprintf(buffer, "http://www.google.com/finance/historical?output=csv&startdate=Jan+01%,+%i&enddate=&q=%s",year, buffer2);
+		sprintf(buffer, "http://finance.google.com/finance/historical?output=csv&startdate=Jan+01%,+%i&enddate=&q=%s",year, buffer2);
 		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
 			//"Ok";
 
