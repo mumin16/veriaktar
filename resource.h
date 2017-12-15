@@ -24,13 +24,23 @@
 #define IDR_AYARLAR                     40014
 #define IDR_METATRADERAKTAR             40016
 #define IDR_MT4                         40017
+#define IDR_DIGER                       40018
+#define ID_DIGER_HAKKINDA               40019
+#define ID_HAKKINDA                     40020
+#define ID_DIGER_GUNCELLEMEKONTROL      40021
+#define IDR_GUNCELLEMEKONTROL           40022
+#define ID_DIGER_SEMBOLLERIGUNCELLE     40023
+#define IDR_SEMBOLLERIGUNCELLE          40024
+#define ID_METATRADER4_MT4              40025
+#define ID_METATRADER4_MT5              40026
+#define IDR_MT5                         40027
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        111
-#define _APS_NEXT_COMMAND_VALUE         40018
+#define _APS_NEXT_COMMAND_VALUE         40028
 #define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

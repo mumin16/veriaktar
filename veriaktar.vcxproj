@@ -72,6 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\x64\Documents\Visual Studio 2015\Projects\veriaktar\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
