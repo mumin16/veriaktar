@@ -18,7 +18,7 @@ char curdir[MAX_PATH];
 
 
 
-const int BUILDVERSION = 20171204;
+const int BUILDVERSION = 20171223;
 
 INT_PTR CALLBACK DialogProc(_In_ HWND   hwndDlg,_In_ UINT   uMsg,_In_ WPARAM wParam,_In_ LPARAM lParam)
 {

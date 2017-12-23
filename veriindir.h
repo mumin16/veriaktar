@@ -11,49 +11,90 @@ char unformatteddate[12];
 std::string idate = "";
 std::string itime = "";
 struct tm* time_info;
-void GunlukDakikagibiindir(_In_ HWND   hwndDlg, char* symbol) {
+
+
+
+void GunlukDakikagibiindir(_In_ HWND   hwndDlg, char* buffer2) {
+
 	char buffer[250];
 	std::string sLine = "";
 	std::ifstream incsv;
 
 
 
-	
+	int length2 = SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETCOUNT, 0, 0);
 
-		sprintf(buffer, "http://www.google.com/finance/getprices?&i=86400&p=500d&q=%s", symbol);
+	for (size_t i = 0; i < length2; i++)
+	{
+		//http://finance.google.com/finance/historical?output=csv&startdate=Jan+01%,+%i&enddate=&q=%s
+		//http://www.google.com/finance/getprices?&i=60&p=1d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
+		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
+		time_t theTime = time(NULL);
+		struct tm *aTime = localtime(&theTime);
+		int year = aTime->tm_year + 1900 - 5; // Year is # years since 1900 - 5yil onceden 1 ocakdan
+
+		char exchange[255];
+		char symbol[255];
+		sscanf(buffer2, "%[^:]:%[^:]", symbol, exchange);
+
+		sprintf(buffer, "http://finance.google.com/finance/getprices?&x=%s&i=86400&p=500d&q=%s", exchange, symbol);
+
 		if (S_OK == URLDownloadToFile(NULL, buffer, symbol, 0, NULL)) {
 			//"Ok";
 
+
+
 			ms = new Metastock;
 			incsv.open(symbol);
-			do
-			{
-				getline(incsv, sLine);//ilk8 satýrý al
-				if (incsv.eof())break;
-			} while (0 != strncmp(sLine.c_str(), "TIMEZONE", 8));
-
-
-
-
-			if (incsv.eof()) {
-				std::string a = symbol;
-				a.append(" yuklenemedi...");
-				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
-				yuklenemeyenler.push_back(symbol);
-				incsv.close();
-				DeleteFile(symbol);
-				return;
-			}
+			getline(incsv, sLine);//ilk satýrý al
 			while (!incsv.eof())
 			{
 
 				getline(incsv, sLine);
 				if (incsv.eof())break;
-				char sdate[255], sclose[255], shigh[255], slow[255], sopen[255], svolume[255];
-				sscanf(sLine.c_str(), "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", sdate, sclose, shigh, slow, sopen, svolume);
+				char sday[12], smonth[12], syear[12], sopen[12], shigh[12], slow[12], sclose[12], svol[12];
+				sscanf(sLine.c_str(), "%[^-]-%[^-]-%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", sday, smonth, syear, sopen, shigh, slow, sclose, svol);
 
 				unsigned char ret[255];
-				float f = atof(sopen);
+				std::string date = std::to_string(atoi(syear) + 100);
+
+				if (0 == lstrcmp(smonth, "Jan")) lstrcpy(smonth, "01");
+				if (0 == lstrcmp(smonth, "Feb")) lstrcpy(smonth, "02");
+				if (0 == lstrcmp(smonth, "Mar")) lstrcpy(smonth, "03");
+				if (0 == lstrcmp(smonth, "Apr")) lstrcpy(smonth, "04");
+				if (0 == lstrcmp(smonth, "May")) lstrcpy(smonth, "05");
+				if (0 == lstrcmp(smonth, "Jun")) lstrcpy(smonth, "06");
+				if (0 == lstrcmp(smonth, "Jul")) lstrcpy(smonth, "07");
+				if (0 == lstrcmp(smonth, "Aug")) lstrcpy(smonth, "08");
+				if (0 == lstrcmp(smonth, "Sep")) lstrcpy(smonth, "09");
+				if (0 == lstrcmp(smonth, "Oct")) lstrcpy(smonth, "10");
+				if (0 == lstrcmp(smonth, "Nov")) lstrcpy(smonth, "11");
+				if (0 == lstrcmp(smonth, "Dec")) lstrcpy(smonth, "12");
+				date.append(smonth);
+
+				if (1 == lstrlen(sday))date.append("0");
+				date.append(sday);
+
+				float f = atof(date.c_str());
+				ms->IEEEToBasic(&f, ret);
+				memmove(fx.date, (LPCSTR)ret, 4);
+
+
+				//for (std::vector<int>::size_type i = 0; i != bolunmes.size(); i++) 
+				//{
+				//	/* std::cout << someVector[i]; ... */
+				//	if (0 == lstrcmp(bolunmes[i].shisse, buffer2)) {
+				//		int k= atoi(bolunmes[i].sdate) - 19000000-1;
+				//		int l = atoi(date.c_str());
+				//		if (k >= l){
+				//			ratio = ratio*atof(bolunmes[i].soran);
+				//			continue;
+				//		}
+
+				//	}
+				//}
+
+				f = atof(sopen);
 				if (f == 0)f = atof(sclose);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.open, (LPCSTR)ret, 4);
@@ -72,93 +113,50 @@ void GunlukDakikagibiindir(_In_ HWND   hwndDlg, char* symbol) {
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.close, (LPCSTR)ret, 4);
 
-				f = atof(svolume);
+				f = atof(svol);
 				ms->IEEEToBasic(&f, ret);
 				memmove(fx.volume, (LPCSTR)ret, 4);
 
 
-				if (0 == strncmp(sdate, "a", 1))
-				{
-					strcpy(sdate, sdate + 1);
-					strcpy(unformatteddate, sdate);
-
-					time_t timeNow = atol(sdate);
-					time_info = localtime(&timeNow);
-
-					idate = std::to_string(time_info->tm_year);
-					if (time_info->tm_mon + 1 <10)idate.append("0");
-					idate.append(std::to_string(time_info->tm_mon + 1));
-					if (time_info->tm_mday <10)idate.append("0");
-					idate.append(std::to_string(time_info->tm_mday));
-
-					itime = std::to_string(time_info->tm_hour);
-					if (time_info->tm_min <10)itime.append("0");
-					itime.append(std::to_string(time_info->tm_min));
-					itime.append("00");
-
-
-				}
-				else {
-					time_t timeNow = atol(unformatteddate) + 86400 * atoi(sdate);
-					time_info = localtime(&timeNow);
-
-					idate = std::to_string(time_info->tm_year);
-					if (time_info->tm_mon + 1 <10)idate.append("0");
-					idate.append(std::to_string(time_info->tm_mon + 1));
-					if (time_info->tm_mday <10)idate.append("0");
-					idate.append(std::to_string(time_info->tm_mday));
-
-					itime = std::to_string(time_info->tm_hour);
-					if (time_info->tm_min <10)itime.append("0");
-					itime.append(std::to_string(time_info->tm_min));
-					itime.append("00");
-				}
-
-				f = atof(idate.c_str());
-				ms->IEEEToBasic(&f, ret);
-				memmove(fx.date, (LPCSTR)ret, 4);
-
-				/*
-				f = atof(itime.c_str());
-				ms->IEEEToBasic(&f, ret);
-				memmove(fxi.time, (LPCSTR)ret, 4);
-				*/
 
 				fxs.push_back(fx);
 
 
 			}
+			std::reverse(fxs.begin(), fxs.end());    // 9 8 7 6 5 4 3 2 1
 
 			if (fxs.size() == 0) {
-				std::string a = symbol;
+				std::string a = buffer2;
 				a.append(" yuklenemedi...");
 				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
-				yuklenemeyenler.push_back(symbol);
+				yuklenemeyenler.push_back(buffer2);
 				delete ms;
 
 				fxs.clear();
 				incsv.close();
 				DeleteFile(symbol);
-				return;
+				continue;
 
 			}
 
 			if (fxs.size()>65500)fxs.erase(fxs.begin(), fxs.end() - 65500);
 
 			std::string dir = curdir;
+
 			dir.append("\\GUNLUK");
-			
 
 			SetCurrentDirectory(dir.c_str());
-			if (FALSE == ms->WriteSecwithData(symbol, fxs, fxis, FALSE, 0)) {
-				std::string a = symbol;
+
+
+			if (FALSE == ms->WriteSecwithData(buffer2, fxs, fxis, FALSE, 0)) {
+				std::string a = buffer2;
 				a.append(" yeni bir sembol ve Metastock daki pencereler acik oldugu icin, aktarilamadi! pencereleri kapa");
 				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
 			}
 			else
 			{
 
-				std::string a = symbol;
+				std::string a = buffer2;
 				a.append(" yuklendi, aktarildi...");
 				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
 			}
@@ -172,17 +170,28 @@ void GunlukDakikagibiindir(_In_ HWND   hwndDlg, char* symbol) {
 
 		}
 		else {
-			std::string a = symbol;
-			a.append(" yuklenemedi...");
-			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
-			yuklenemeyenler.push_back(symbol);
-			return;
+
+			GunlukDakikagibiindir(hwndDlg, buffer2);
+			continue;
+
+
 
 		}
 
 
 
-	
+	}
+
+
+	SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_RESETCONTENT, 0, 0);
+
+	for (std::vector<int>::size_type i = 0; i != yuklenemeyenler.size(); i++) {
+		/* std::cout << someVector[i]; ... */
+		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_INSERTSTRING, 0, (LPARAM)yuklenemeyenler[i].c_str());
+	}
+
+	yuklenemeyenler.clear();
+	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"::::::::YUKLEME TAMAMLANDI::::::::");
 
 
 	
@@ -202,13 +211,17 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
 		GetDlgItemText(hwndDlg, IDC_XDAKIKA, buffer3, 256);
 		
-		sprintf(buffer, "http://finance.google.com/finance/getprices?&i=%i&p=%sd&q=%s", atoi(buffer3) * 60,"50", buffer2);
+		char exchange[255];
+		char symbol[255];
+		sscanf(buffer2, "%[^:]:%[^:]", symbol, exchange);
 
-		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
+		sprintf(buffer, "http://finance.google.com/finance/getprices?&x=%s&i=%i&p=%sd&q=%s", exchange,atoi(buffer3) * 60,"50", symbol);
+
+		if (S_OK == URLDownloadToFile(NULL, buffer, symbol, 0, NULL)) {
 			//"Ok";
 			
 			ms = new Metastock;
-			incsv.open(buffer2);
+			incsv.open(symbol);
 			do
 			{
 				getline(incsv, sLine);//ilk8 satýrý al
@@ -224,7 +237,7 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 				SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)a.c_str());
 				yuklenemeyenler.push_back(buffer2);
 				incsv.close();
-				DeleteFile(buffer2);
+				DeleteFile(symbol);
 				continue;
 			}
 			while (!incsv.eof())
@@ -320,7 +333,7 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 
 				fxis.clear();
 				incsv.close();
-				DeleteFile(buffer2);
+				DeleteFile(symbol);
 				continue;
 
 			}
@@ -351,7 +364,7 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 
 			fxis.clear();
 			incsv.close();
-			DeleteFile(buffer2);
+			DeleteFile(symbol);
 
 
 		}
@@ -417,14 +430,18 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 		struct tm *aTime = localtime(&theTime);
 		int year = aTime->tm_year + 1900-5; // Year is # years since 1900 - 5yil onceden 1 ocakdan
 
-		sprintf(buffer, "http://finance.google.com/finance/historical?output=csv&startdate=Jan+01%,+%i&enddate=&q=%s",year, buffer2);
-		if (S_OK == URLDownloadToFile(NULL, buffer, buffer2, 0, NULL)) {
+		char exchange[255];
+		char symbol[255];
+		sscanf(buffer2, "%[^:]:%[^:]", symbol, exchange);
+
+		sprintf(buffer, "http://finance.google.com/finance/historical?output=csv&startdate=Jan+01%,+%i&enddate=&q=%s:%s",year,exchange,symbol);
+		if (S_OK == URLDownloadToFile(NULL, buffer, symbol, 0, NULL)) {
 			//"Ok";
 
 
 
 			ms = new Metastock;
-			incsv.open(buffer2);
+			incsv.open(symbol);
 			getline(incsv, sLine);//ilk satýrý al
 			while (!incsv.eof())
 			{
@@ -513,7 +530,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 			fxs.clear();
 			incsv.close();
-			DeleteFile(buffer2);
+			DeleteFile(symbol);
 			continue;
 
 		}
@@ -544,7 +561,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 			fxs.clear();
 			incsv.close();
-			DeleteFile(buffer2);
+			DeleteFile(symbol);
 	
 			
 		}
