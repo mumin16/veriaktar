@@ -191,6 +191,7 @@ void GunlukDakikagibiindir(_In_ HWND   hwndDlg, char* buffer2) {
 
 	
 }
+
 void Dakikalikindir(_In_ HWND   hwndDlg) {
 	char buffer[250];
 	std::string sLine = "";
@@ -209,14 +210,14 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 		char exchange[255];
 		char symbol[255];
 		sscanf(buffer2, "%[^:]:%[^:]", symbol, exchange);
-
+	
 		sprintf(buffer, "http://finance.google.com/finance/getprices?&x=%s&i=%i&p=%sd&q=%s", exchange,atoi(buffer3) * 60,"50", symbol);
-
 		if (S_OK == URLDownloadToFile(NULL, buffer, symbol, 0, NULL)) {
 			//"Ok";
-			
 			ms = new Metastock;
-			incsv.open(symbol);
+
+			
+			incsv.open(symbol);				
 			do
 			{
 				getline(incsv, sLine);//ilk8 satýrý al
@@ -379,6 +380,7 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 
 	if (SendDlgItemMessage(hwndDlg, IDC_TEKRAR, BM_GETCHECK, 0, 0))
 	{
+		Sleep(5000);
 		Dakikalikindir(hwndDlg);
 	}
 	else
@@ -583,6 +585,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 	if (SendDlgItemMessage(hwndDlg, IDC_TEKRAR, BM_GETCHECK, 0, 0)) 
 	{
+		Sleep(5000);
 		VeriIndir(hwndDlg);
 	}
 	else

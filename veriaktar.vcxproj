@@ -96,6 +96,7 @@
       </BufferSecurityCheck>
       <MinimalRebuild>
       </MinimalRebuild>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
