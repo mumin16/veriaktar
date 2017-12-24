@@ -376,15 +376,23 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 
 	}
 
-	SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_RESETCONTENT, 0, 0);
 
-	for (std::vector<int>::size_type i = 0; i != yuklenemeyenler.size(); i++) {
-		/* std::cout << someVector[i]; ... */
-		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_INSERTSTRING, 0, (LPARAM)yuklenemeyenler[i].c_str());
+	if (SendDlgItemMessage(hwndDlg, IDC_TEKRAR, BM_GETCHECK, 0, 0))
+	{
+		Dakikalikindir(hwndDlg);
 	}
+	else
+	{
+		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_RESETCONTENT, 0, 0);
 
-	yuklenemeyenler.clear();
-	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"::::::::YUKLEME TAMAMLANDI::::::::");
+		for (std::vector<int>::size_type i = 0; i != yuklenemeyenler.size(); i++) {
+			/* std::cout << someVector[i]; ... */
+			SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_INSERTSTRING, 0, (LPARAM)yuklenemeyenler[i].c_str());
+		}
+
+		yuklenemeyenler.clear();
+		SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"::::::::YUKLEME TAMAMLANDI::::::::");
+	}
 }
 void VeriIndir(_In_ HWND   hwndDlg) {
 
@@ -573,16 +581,24 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 	}
 
+	if (SendDlgItemMessage(hwndDlg, IDC_TEKRAR, BM_GETCHECK, 0, 0)) 
+	{
+		VeriIndir(hwndDlg);
+	}
+	else
+	{
 
-	SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_RESETCONTENT, 0, 0);
+		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_RESETCONTENT, 0, 0);
 
-	for (std::vector<int>::size_type i = 0; i != yuklenemeyenler.size(); i++) {
-		/* std::cout << someVector[i]; ... */
-		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_INSERTSTRING, 0, (LPARAM)yuklenemeyenler[i].c_str());
+		for (std::vector<int>::size_type i = 0; i != yuklenemeyenler.size(); i++) {
+			/* std::cout << someVector[i]; ... */
+			SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_INSERTSTRING, 0, (LPARAM)yuklenemeyenler[i].c_str());
+		}
+
+		yuklenemeyenler.clear();
+		SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"::::::::YUKLEME TAMAMLANDI::::::::");
 	}
 
-	yuklenemeyenler.clear();
-	SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"::::::::YUKLEME TAMAMLANDI::::::::");
 }
 
 

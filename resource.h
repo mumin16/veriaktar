@@ -17,6 +17,8 @@
 #define IDC_1DAKIKA                     1011
 #define IDC_EDIT1                       1020
 #define IDC_XDAKIKA                     1021
+#define IDC_CHECK1                      1022
+#define IDC_TEKRAR                      1022
 #define IDR_HAKKINDA                    40003
 #define IDR_VERIAKTAR                   40004
 #define IDR_PORTFOYYUKLE                40005
@@ -41,7 +43,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        111
 #define _APS_NEXT_COMMAND_VALUE         40028
-#define _APS_NEXT_CONTROL_VALUE         1022
+#define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
