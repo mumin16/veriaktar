@@ -28,7 +28,7 @@ void GunlukDakikagibiindir(_In_ HWND   hwndDlg, char* buffer2) {
 	sscanf(buffer2, "%[^:]:%[^:]", symbol, exchange);
 
 	sprintf(buffer, "http://finance.google.com/finance/getprices?&x=%s&i=86400&p=500d&q=%s", exchange, symbol);
-
+	CoInitialize(NULL);
 	if (S_OK == URLDownloadToFile(NULL, buffer, symbol, 0, NULL)) {
 		//"Ok";
 
@@ -212,6 +212,7 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 		sscanf(buffer2, "%[^:]:%[^:]", symbol, exchange);
 	
 		sprintf(buffer, "http://finance.google.com/finance/getprices?&x=%s&i=%i&p=%sd&q=%s", exchange,atoi(buffer3) * 60,"50", symbol);
+		CoInitialize(NULL);
 		if (S_OK == URLDownloadToFile(NULL, buffer, symbol, 0, NULL)) {
 			//"Ok";
 			ms = new Metastock;
@@ -440,6 +441,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 		sscanf(buffer2, "%[^:]:%[^:]", symbol, exchange);
 
 		sprintf(buffer, "http://finance.google.com/finance/historical?output=csv&startdate=Jan+01%,+%i&enddate=&q=%s:%s",year,exchange,symbol);
+		CoInitialize(NULL);
 		if (S_OK == URLDownloadToFile(NULL, buffer, symbol, 0, NULL)) {
 			//"Ok";
 

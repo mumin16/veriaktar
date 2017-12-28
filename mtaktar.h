@@ -33,7 +33,9 @@ void mtaktar(_In_ HWND   hwndDlg) {
 	{
 		getline(ptxt, sLine);
 		char syear[12], smonth[12], sday[12], shour[12], sminute[12], sopen[12], shigh[12], slow[12], sclose[12], svol[12];
-		sscanf(sLine.c_str(), "%[^.].%[^.].%[^,],%[^:]:%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", syear, smonth, sday, shour, sminute, sopen, shigh, slow, sclose, svol);
+		int inf=sscanf(sLine.c_str(), "%[^.].%[^.].%[^,],%[^:]:%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", syear, smonth, sday, shour, sminute, sopen, shigh, slow, sclose, svol);
+		if (inf != 10)continue;
+
 
 		unsigned char ret[255];
 		float f = atof(sopen);
@@ -83,8 +85,10 @@ void mtaktar(_In_ HWND   hwndDlg) {
 
 	dir.append("\\METATRADER");
 
+
 	if (fxis.size() != 0) {
 		SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"Metatrader aktarimi basarili!");
+
 	}
 	else
 	{
@@ -109,10 +113,47 @@ void mtaktar(_In_ HWND   hwndDlg) {
 	}
 
 
+	HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
+	{
+
+		ULONG cbAnsi, cCharacters;
+		DWORD dwError;
+
+		// If input is null then just return the same.
+		if (pszW == NULL)
+		{
+			*ppszA = NULL;
+			return NOERROR;
+		}
+
+		cCharacters = wcslen(pszW) + 1;
+		// Determine number of bytes to be allocated for ANSI string. An
+		// ANSI string can have at most 2 bytes per character (for Double
+		// Byte Character Strings.)
+		cbAnsi = cCharacters * 2;
+
+		// Use of the OLE allocator is not required because the resultant
+		// ANSI  string will never be passed to another COM component. You
+		// can use your own allocator.
+		*ppszA = (LPSTR)CoTaskMemAlloc(cbAnsi);
+		if (NULL == *ppszA)
+			return E_OUTOFMEMORY;
+
+		// Convert to ANSI.
+		if (0 == WideCharToMultiByte(CP_OEMCP, 0, pszW, cCharacters, *ppszA,
+			cbAnsi, NULL, NULL))
+		{
+			dwError = GetLastError();
+			CoTaskMemFree(*ppszA);
+			*ppszA = NULL;
+			return HRESULT_FROM_WIN32(dwError);
+		}
+		return NOERROR;
+
+	}
 
 	void mt5aktar(_In_ HWND   hwndDlg) {
 
-		MessageBox(hwndDlg, "Notdefterinde ANSI olarak Farkli Kayit yapilmis olmaliydi!", "Dikkat!", 0);
 
 		OPENFILENAME ofn = { 0 };
 		char szSaveFileName[MAX_PATH] = { 0 };
@@ -128,17 +169,35 @@ void mtaktar(_In_ HWND   hwndDlg) {
 		ofn.lpstrDefExt = "csv";
 		if (0 == GetOpenFileName(&ofn))return;
 
+
+		HANDLE h = CreateFile(ofn.lpstrFile, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		DWORD dwFileSize = GetFileSize(h, NULL);
+		void* buffer = malloc(dwFileSize);
+		void* ansibuffer = malloc(dwFileSize);
+		DWORD dwBytesWritten;
+		ReadFile(h, buffer, dwFileSize, &dwBytesWritten, NULL);
+		CloseHandle(h);
+		UnicodeToAnsi((LPCOLESTR)buffer+1, (LPSTR*)&ansibuffer);
+		HANDLE hFile = CreateFile("convertdmt5.csv", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		WriteFile(hFile, ansibuffer, dwFileSize, &dwBytesWritten, NULL);
+		CloseHandle(hFile);
+
 		ms = new Metastock;
+
+
+
 		std::string sLine = "";
 		std::ifstream ptxt;
-		ptxt.open(ofn.lpstrFile);
+		ptxt.open("convertdmt5.csv");
 
+
+		
 		while (!ptxt.eof())
 		{
 			getline(ptxt, sLine);
 			char syear[12], smonth[12], sday[12], shour[12], sminute[12], sopen[12], shigh[12], slow[12], sclose[12], svol[12];
-			sscanf(sLine.c_str(), "%[^.].%[^.].%[^ ] %[^:]:%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", syear, smonth, sday, shour, sminute, sopen, shigh, slow, sclose, svol);
-
+			int result= sscanf(sLine.c_str(), "%[^.].%[^.].%[^ ] %[^:]:%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", syear, smonth, sday, shour, sminute, sopen, shigh, slow, sclose, svol);
+			if (result != 10)continue;
 			unsigned char ret[255];
 			float f = atof(sopen);
 			ms->IEEEToBasic(&f, ret);
@@ -182,13 +241,14 @@ void mtaktar(_In_ HWND   hwndDlg) {
 			fxis.push_back(fxi);
 		}
 		ptxt.close();
-
+		DeleteFile("convertdmt5.csv");
 		std::string dir = curdir;
 
 		dir.append("\\METATRADER");
 
 		if (fxis.size() != 0) {
 			SendDlgItemMessage(hwndDlg, IDC_BILGI, LB_INSERTSTRING, 0, (LPARAM)"Metatrader aktarimi basarili!");
+			
 		}
 		else
 		{
@@ -208,4 +268,5 @@ void mtaktar(_In_ HWND   hwndDlg) {
 
 		fxis.clear();
 
+		
 	}
