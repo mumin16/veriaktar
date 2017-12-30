@@ -203,7 +203,6 @@ void Dakikalikindir(_In_ HWND   hwndDlg) {
 
 	for (size_t i = 0; i < length2; i++)
 	{
-		//http://www.google.com/finance/getprices?&i=60&p=50d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
 		GetDlgItemText(hwndDlg, IDC_XDAKIKA, buffer3, 256);
 		
@@ -411,12 +410,7 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 	}
 	
 	
-	//if(1==SendDlgItemMessage(hwndDlg, IDC_GUNLUK, BM_GETCHECK, 0, 0))	MessageBox(hwndDlg, "Günlük Periyot secilmis!", 0, MB_OK);
-		
-	
 
-
-	
 
 	char buffer[250];
 	std::string sLine = "";
@@ -429,8 +423,6 @@ void VeriIndir(_In_ HWND   hwndDlg) {
 
 	for (size_t i = 0; i < length2; i++)
 	{
-		//http://finance.google.com/finance/historical?output=csv&startdate=Jan+01%,+%i&enddate=&q=%s
-		//http://www.google.com/finance/getprices?&i=60&p=1d&q=XU030        60=SANÝYE 1D=1GÜNLÜK tarih ayýklayýcý=A1/86400 + 25569 + (5.5/24)
 		SendDlgItemMessage(hwndDlg, IDC_SYMBOL2, LB_GETTEXT, i, (LPARAM)buffer2);
 		time_t theTime = time(NULL);
 		struct tm *aTime = localtime(&theTime);
