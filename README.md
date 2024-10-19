@@ -1,1 +1,1 @@
-﻿Metastock a Bist ve Dünya borsa verilerini aktarım programı: basit ve beleş
+﻿Metastock a Bist ve Dünya borsa verilerini ( Yahoo dan) aktarım programı: basit ve beleş
