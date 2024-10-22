@@ -1,4 +1,4 @@
-VeriAktar programı, ﻿Metastock 'a (AmiBroker, NinjaTrader gibi diğer analiz programlarıda kullanılabilir) Bist ve Dünya borsa , finans verilerini ( Yahoo 'dan https://finance.yahoo.com/quote/XU100.IS/ ) aktarım programıdır. Basit ve ücretsizdir. 
+VeriAktar programı, ﻿Metastock 'a (AmiBroker, NinjaTrader gibi diğer analiz programlarıda kullanılabilir) Bist ve Dünya borsa , finans verilerini ( Yahoo 'dan https://finance.yahoo.com/quote/XU100.IS/ ) aktarım programıdır. Aynı zamanda endeks,dolar,euro,altın,petrol,coin ve benzeri herhangi sembol bazlı çoklu sembol tanımlayarak analizlerinizi genişletebilirsiniz. Basit ve ücretsizdir. 
 
 İndirmek için : https://github.com/mumin16/veriaktar/releases
 
