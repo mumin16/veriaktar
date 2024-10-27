@@ -1,1 +1,1 @@
-{"note":"1) Bug fixed - if any chart is open in Metastock, the veriaktar gives a warning.","version":20241029}
+{"note":"1) Bug fixed - if any chart is open in Metastock or there is any access denied to MASTER file, the veriaktar gives a warning.","version":20241029}
