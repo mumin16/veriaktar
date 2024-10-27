@@ -2,6 +2,7 @@ VeriAktar programı, ﻿Metastock 'a (AmiBroker, NinjaTrader gibi gibi sayısız
 
 İndirmek için : https://github.com/mumin16/veriaktar/releases
 
-![image](https://github.com/user-attachments/assets/50cbe2e8-3c0c-4380-a230-f78feb22c98a)
+![image](https://github.com/user-attachments/assets/15837f47-278a-4e88-9e96-ec41cf2df416)
+
 
 
