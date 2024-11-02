@@ -1,0 +1,164 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Turkish (Türkiye) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_TRK)
+LANGUAGE LANG_TURKISH, SUBLANG_DEFAULT
+#pragma code_page(1254)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOGEX 0, 0, 371, 270
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "VeriAktar 20241109"
+MENU IDR_MENU1
+FONT 8, "MS Shell Dlg", 400, 0, 0xA2
+BEGIN
+    LISTBOX         IDC_SYMBOLS,7,55,141,142,LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_BILGI,7,228,357,34,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Log:",IDC_STATICINFO,7,217,15,8
+    PUSHBUTTON      "+",IDC_SYMBOLADD,151,200,27,14
+    PUSHBUTTON      "-",IDC_SYMBOLREMOVE,151,55,23,14
+    PUSHBUTTON      "Clear",IDC_SYMBOLSCLEAR,151,181,27,14
+    COMBOBOX        IDC_PERIOD,35,7,54,30,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Output Directory:",IDC_STATIC,7,26,103,8
+    EDITTEXT        IDC_SYMBOL,7,202,140,14,ES_UPPERCASE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_OUTPUTDIR,7,36,143,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "...",IDC_MSDIRSELECT,152,36,22,14
+    LTEXT           "Period:",IDC_STATIC,7,7,24,8
+    GROUPBOX        "Multi-Symbol Generator",IDC_STATIC,184,36,180,179
+    EDITTEXT        IDC_TARGETDIR,185,77,128,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Target Directory:",IDC_STATIC,188,62,58,8
+    PUSHBUTTON      "...",IDC_TARGETDIRSELECT,315,77,28,13
+    EDITTEXT        IDC_DIVISOR,185,111,127,14,ES_UPPERCASE | ES_AUTOHSCROLL
+    LTEXT           "Divisor symbol:",IDC_STATIC,187,100,49,8
+    PUSHBUTTON      "Action",IDC_ACTION,315,111,30,14
+    LTEXT           "Length:",IDC_STATIC,93,7,26,8
+    EDITTEXT        IDC_LENGTH,121,7,51,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Years Ago (Days for intraday). \n(Max 59 days for intraday).",IDC_STATIC,174,7,147,25
+    CONTROL         "for new name, add /X seperator",IDC_EXTENSION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,187,135,119,10
+    CONTROL         "Loop",IDC_LOOP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,333,7,31,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 364
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 263
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENUEX
+BEGIN
+    POPUP "Symbols list",                   65535,MFT_STRING,MFS_ENABLED
+    BEGIN
+        MENUITEM "Load",                        IDR_PORTFOYYUKLE,MFT_STRING,MFS_ENABLED
+        MENUITEM "Save",                        IDR_PORTFOYKAYDET,MFT_STRING,MFS_ENABLED
+    END
+    MENUITEM "<<Start>>",                   IDR_VERIAKTAR,MFT_STRING,MFS_ENABLED
+    MENUITEM "About",                       IDR_ABOUT,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "graph.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+1                       RT_MANIFEST             "veriaktar.exe.manifest"
+
+#endif    // Turkish (Türkiye) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
