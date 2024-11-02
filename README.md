@@ -1,4 +1,4 @@
-VeriAktar is a program that imports global financial data (stock exchange, indices, currencies, gold, oil, future, crypto) from Yahoo (https://finance.yahoo.com/quote) to Metastock (can be used with numerous analysis programs such as AmiBroker, NinjaTrader). The transfer can be provided as a loop. You can also expand your analysis by defining multiple symbols based on any symbol (Even multi multi-based: For example, reproducing symbols produced with Gold base with Index base). It is simple and free.
+VeriAktar is a program that imports global financial data (stock exchange, indices, currencies, gold, oil, future, crypto) from Yahoo (https://finance.yahoo.com/quote) to Metastock (can be used with numerous analysis programs such as AmiBroker, NinjaTrader). The loop option in program may be used to automatically update data. You can also expand your analysis by defining multiple symbols based on any symbol (Even multi multi-based: For example, reproducing symbols produced with Gold base with Index base). It is simple and free.
 
 To download: https://github.com/mumin16/veriaktar/releases
 
