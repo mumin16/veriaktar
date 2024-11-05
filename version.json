@@ -1,1 +1,1 @@
-{"note":"1) Bug : After unsuccessful download , break the loop.","version":20241112}
+{"note":"1) Bug Fixed: After unsuccessful download , break the loop.","version":20241112}
