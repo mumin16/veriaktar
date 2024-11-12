@@ -14,3 +14,8 @@ macOS screenshot:
 
 ![Screenshot 2024-11-12 at 21 18 21](https://github.com/user-attachments/assets/85718c0b-77e6-480a-b253-7e1bc84216a7)
 
+
+Linux screenshot:
+
+![screen](https://github.com/user-attachments/assets/96beb6d9-62ec-4f5a-82ae-7ee5cfa76efe)
+
