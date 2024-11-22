@@ -1,1 +1,1 @@
-{"divisor":"BTC-USD","length":4,"outputdir":"MSData/","period":"Daily","datasource":"Yahoo","symbols":["BTC-USD","ETH-USD","USDT-USD","BNB-USD","SOL-USD","USDC-USD","XRP-USD","DOGE-USD","TRX-USD","TON11419-USD"],"targetdir":"MSData/"}
+{"divisor":"BTC-USD","length":365,"outputdir":"MSData/","period":"Daily","datasource":"Yahoo","symbols":["BTC-USD","ETH-USD","USDT-USD","BNB-USD","SOL-USD","USDC-USD","XRP-USD","DOGE-USD","TRX-USD","TON11419-USD"],"targetdir":"MSData/"}
