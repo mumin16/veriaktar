@@ -19,3 +19,21 @@ Linux screenshot:
 
 ![screen](https://github.com/user-attachments/assets/96beb6d9-62ec-4f5a-82ae-7ee5cfa76efe)
 
+
+
+Disclaimer
+
+Investing.com, yahoo.com and binance.com are registered trademarks.
+VeriAktar isn't affiliated, endorsed, or vetted by that registered trademarks.
+VeriAktar is free and open-source software that use that registered trademarks's available data, intended for research and educational purposes only.
+You should refer to  "terms and conditions" at them offical sites for details on your rights to use the actual data,as it is intended for personal use only.
+
+Yasal Uyarı
+
+Investing.com, yahoo.com ve binance.com tescilli ticari markalardır.
+VeriAktar, söz konusu tescilli ticari markalarla bağlantılı, onaylı veya denetlenmiş değildir.
+Veriaktar, söz konusu tescilli ticari markaların mevcut verilerini kullanan, yalnızca araştırma ve eğitim amaçlı, ücretsiz ve açık kaynaklı bir yazılımdır.
+Yalnızca kişisel kullanım için tasarlandığı için gerçek verileri kullanma haklarınız hakkında ayrıntılı bilgi için resmi sitelerindeki "şartlar ve koşullar" bölümüne başvurmalısınız.
+
+
+
