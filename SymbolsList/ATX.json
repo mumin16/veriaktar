@@ -1,1 +1,1 @@
-{"divisor":"^ATX","length":1000,"outputdir":"MSData/","period":"Daily","datasource":"Yahoo","symbols":["ANDR.VI","ATS.VI","BG.VI","CAI.VI","DOC.VI","EBS.VI","EVN.VI","LNZ.VI","OMV.VI","POST.VI","RBI.VI","SBO.VI","UQA.VI","VER.VI","VIG.VI","VOE.VI","WIE.VI","^ATX"]}
+{"divisor":"^ATX","length":1000,"outputdir":"MSData/","period":"Daily","datasource":"Yahoo","symbols":["ANDR.VI","ATS.VI","BG.VI","CAI.VI","DOC.VI","EBS.VI","EVN.VI","LNZ.VI","OMV.VI","POS.VI","POST.VI","RBI.VI","SBO.VI","STR.VI","UQA.VI","VER.VI","VIG.VI","VOE.VI","WIE.VI","^ATX"]}
